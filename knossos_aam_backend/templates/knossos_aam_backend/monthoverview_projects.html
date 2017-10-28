@@ -12,7 +12,7 @@
 
 <h2>Totals</h2>
 {% for p, employee in totals.items %}
-<h3>{{ p.project_name }}</h3>
+<h3>{{ p.name }}</h3>
 <table id="boxtable">
 <tr>
 <th>Employee</th>
@@ -33,7 +33,7 @@
 
 <h2>Details</h2>
 {% for p, employee in per_task.items %}
-<h3>{{ p.project_name }}</h3>
+<h3>{{ p.name }}</h3>
 <table id="boxtable">
 <tr>
 <th>Employee</th>

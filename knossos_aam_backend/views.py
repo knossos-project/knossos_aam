@@ -171,11 +171,11 @@ def monthoverview_view(request, year, month):
 def monthoverview_sort_by_project_view(request, year, month):
     timeoverview_project_totals = {}
     timeoverview_project_details = {}
-    
+
     for p in Project.objects.all():
         timeoverview_employee_totals = {}
         timeoverview_employee_details = {}
-        
+
         for e in p.employee_set.all():
             timeoverview_employee_totals[e] = {}
             timeoverview_employee_details[e] = {}
