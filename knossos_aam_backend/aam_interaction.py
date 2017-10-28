@@ -360,8 +360,20 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
 
 
 def get_monthly_worktime_for_submissions(submission_set):
-    # Calculate how much of the work time has been
-    # spent in different months
+    """ Calculate how much of the work time has been spent in different months
+    Parameters:
+    ----------
+    submission_set: QuerySet(Submission)
+
+    Returns:
+    ----------
+
+    set {by_month_per_task, by_month_totals}
+
+    by_month_per_task: { year: { month: { task: [worktime, is_final] } } }
+    by_month_totals: { year: { month: [worktime, is_final] } }
+    
+    """
 
     by_month_per_task = {}
     by_month_totals = {}
