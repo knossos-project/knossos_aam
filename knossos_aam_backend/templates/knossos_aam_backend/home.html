@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Hi, {{ firstname }}.</h1>
+
+<i>
+Please note that <a href = "http://www.knossostool.org/">Knossos 4.1.2</a> (or newer) is required in order to use knossos_aam.<br>
+</i>
+
+<h2>Current Project: {{ employee.project.project_name }}</h2>
+{% if active_work|length %}
+<h2>Current work</h2>
+
+    <form action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+    {% csrf_token %}
+    <table id="boxtable">
+    <tr>
+        <th>Category</th>
+        <th>Task Name</th>
+        <th>Coordinate</th>
+        <th>Task file</th>
+        <th>Last Submission</th>
+    </tr>
+    {% for w in active_work %}
+        <tr>
+            <td>{{w.task.category.name}}</td>
+            <td>
+            <a href="{% url 'knossos_aam_backend:workdetails' w.id %}">
+            {{w.task.name}}</a></td>
+            <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{% endif %}</td>
+            <td>{% if w.task.task_file == 'False' %}No task file.{% else %}<a href="{{w.task.task_file.url}}">Download task file</a>{% endif %}</td>
+            <td>{{w.latestsubmit}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    </form>
+{% endif %}
+
+<h2>Available tasks</h2>
+    {% for cat, tasks in available_tasks.items %}
+        <h3>{{ cat.name }}</h3>
+        {% autoescape off %}
+        {{ cat.description }}.
+        {% endautoescape %}
+        <form action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+        {% csrf_token %}
+        <table id="boxtable">
+        <tr>
+        <th>Task Name</th>
+        <th>Coordinate</th>
+        <th>Task file</th>
+        <th>Date Added</th>
+        <th></th>
+        </tr>
+        {% for t in tasks %}
+            <tr>
+            <td>{{ t.name }}</td>
+            <td>{% if t.task_file == 'False' %}({{ t.x }}, {{ t.y }}, {{ t.z }}){% else %}No coordinate.{% endif %}</td>
+            <td>{% if t.task_file == 'False' %}No task file.{% else %}(Task file){% endif %}</td>
+            <td>{{ t.date_added }}</td>
+            <td>Choose this task through Knossos to work on it</td>
+            </tr>
+        {% endfor %}
+        </table>
+        </form>
+    {% endfor %}
+
+{% if completed_work|length %}
+<h2>Completed work</h2>
+    <form action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+    {% csrf_token %}
+    <table id="boxtable">
+    <tr>
+    <th>Category</th>
+    <th>Task Name</th>
+    <th>Coordinate</th>
+    <th>Task file</th>
+    <th>Started</th>
+    <th>Closed</th>
+    <th></th>
+    </tr>
+    {% for w in completed_work %}
+        <tr>
+        <td>{{w.task.category.name}}</td>
+        <td><a href="{% url 'knossos_aam_backend:workdetails' w.id %}">{{ w.task.name }}</a></td>
+        <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{% endif %}</td>
+        <td>{% if w.task.task_file == 'False' %}No task file.{% else %}<a href="{{w.task.task_file.url}}">Download task file</a>{% endif %}</td>
+        <td>{{w.started}}</td>
+        <td>{{w.latestsubmit}}</td>
+        <td><button type="submit" name="reopen_work_id" value="{{ w.id }}">Reopen</button></td>
+        </tr>
+    {% endfor %}
+    </table>
+    </form>
+{% endif %}
+
+{% endblock %}

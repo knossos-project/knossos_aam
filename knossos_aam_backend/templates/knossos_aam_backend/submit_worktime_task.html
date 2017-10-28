@@ -1,0 +1,31 @@
+<div id="fullpage">
+<h1>Submit Worktime Task.</h1>
+<i>
+Submitting this work will give the admins the possibility to enter a constant worktime 
+to add to your monthly worktime!
+</i>
+
+<script language="javascript">
+<!--
+function notify() {
+    document.getElementById('waitEl').style.display = "inline";
+    document.getElementById('formEl').style.display = "none";
+}
+// -->
+</script>
+<h1 id="waitEl" style="display: none">Please Wait...</h1>
+<div id="formEl">
+<form enctype="multipart/form-data" action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+    {% csrf_token %}
+    <label for="comment">Comment</label>
+    <br>
+    <textarea id="comment" rows="4" cols="50" name="submit_work_comment"></textarea>
+    <br>
+    <input type="hidden" name="submit_work_isfinal" value=True>
+    <input type="hidden" name="submit_work_id" value="{{ work.id }}">
+    <input type="submit" name="Submit" onclick='notify()' value="Submit">
+</form>
+
+<a href="{% url 'knossos_aam_backend:home' %}">Cancel Submission</a>
+</div>
+</div>

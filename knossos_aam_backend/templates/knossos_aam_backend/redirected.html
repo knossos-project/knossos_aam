@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h1>{{ message }}</h1>
+{{ minor_message }}
+
+Please select the file again to proceed.
+
+<form enctype="multipart/form-data" action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+    {% csrf_token %}
+    <input type="file" value="{{ submit_file }}" name="submit_work_file" id="file"><br>
+{% if submit_isfinal != 0 %}
+    <input type="hidden" name="submit_work_isfinal" value=0>
+{% endif %}
+    <input type="hidden" value="{{ submit_comment }}" name="submit_work_comment">
+    <input type="hidden" name="submit_work_id" value="{{ submit_work_id }}">
+    <input type="submit" name="Yes" onclick='notify()' value="Yes"> 
+</form>
+
+<form action="{% url 'knossos_aam_backend:home' %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="No" onclick='notify()' value="No">  
+</form>
+
+{% endblock %}
+

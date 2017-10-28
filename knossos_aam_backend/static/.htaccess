@@ -1,0 +1,3 @@
+<Files *.nml>
+ Header set Content-Disposition attachment
+</Files>

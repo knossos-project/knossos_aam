@@ -1,0 +1,31 @@
+{% extends "noLoginBase.html" %}
+
+{% block main %}
+
+{% if form.errors %}
+<h2>Username or password wrong.</h2>
+{% else %}
+<h2>Welcome to knossos_aam!</h2>
+{% endif %}
+
+<form method="post" action="{% url 'knossos_aam_backend:login' %}">
+
+{% csrf_token %}
+<table>
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input type="submit" value="login" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+<a href="http://www.mpimf-heidelberg.mpg.de/imprint">Imprint</a>
+
+{% endblock %}

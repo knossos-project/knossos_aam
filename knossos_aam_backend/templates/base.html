@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{STATIC_URL}}style.css" />
+    <title>{% block title %}aam{% endblock %}</title>
+</head>
+
+<body>
+    {% block main %}
+    {% endblock %}
+    {% block nav %}
+    <a href="{% url 'knossos_aam_backend:home' %}">Home</a> || <a href="{% url 'knossos_aam_backend:usertime' %}">Time overview</a> || <a href="{% url 'knossos_aam_backend:logout' %}">Logout</a>
+    {% endblock %}
+</body>
+</html>

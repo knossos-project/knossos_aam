@@ -1,0 +1,11 @@
+<div id="fullpage">
+<h1>Cancel Task Result</h1>
+
+{% if success %}
+<b>Successfully deleted task</b>
+{% else %}
+<b>Could not delete task. Is the username and task name correct?</b>
+<br>
+{{ reason }}
+{% endif %}
+

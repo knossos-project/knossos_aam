@@ -1,0 +1,2 @@
+recursive-include knossos_aam_backend/static *
+recursive-include knossos_aam_backend/templates *

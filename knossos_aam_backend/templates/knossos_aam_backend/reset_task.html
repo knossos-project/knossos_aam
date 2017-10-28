@@ -1,0 +1,20 @@
+<div id="fullpage">
+<h1>Reset Task</h1>
+
+<div id="formEl">
+<form enctype="multipart/form-data" action="{% url 'knossos_aam_backend:reset_task' %}" method="post">
+    {% csrf_token %}
+    <label for="username">Username</label>
+    <br>
+    <input type="text" id="username" name="username">
+    <br>
+    <label for="task">Task</label>
+    <br>
+    <input type="text" name="task" name="task">
+    <br>
+    <input type="submit" name="Submit" value="Submit">
+</form>
+
+<a href="{% url 'knossos_aam_backend:home' %}">Cancel</a>
+</div>
+</div>

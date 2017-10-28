@@ -1,0 +1,61 @@
+body
+{
+	line-height: 1.6em;
+        font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+        font-size: 12px;
+	width: 100%;
+	height: 100%;
+}
+
+h2
+{
+	font-size: 15px;
+}
+
+#center
+{
+background-color: #FFFFFF;
+border:1px solid black;
+width: 270px;
+height: 160px;
+position: absolute;
+top: 50%;
+left: 50%;
+margin: -140px 0 0 -130px;
+text-align: center;
+opacity:0.9;
+filter:alpha(opacity=90);
+} 
+
+#boxtable
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 45px;
+	width: 700px;
+	text-align: left;
+	border-collapse: collapse;
+}
+#boxtable th
+{
+	font-size: 13px;
+	font-weight: normal;
+	padding: 8px;
+	background: #b9c9fe;
+	border-top: 4px solid #aabcfe;
+	border-bottom: 1px solid #fff;
+	color: #039;
+}
+#boxtable td
+{
+	padding: 8px;
+	background: #e8edff; 
+	border-bottom: 1px solid #fff;
+	color: #669;
+	border-top: 1px solid transparent;
+}
+#boxtable tr:hover td
+{
+	background: #d0dafd;
+	color: #339;
+}

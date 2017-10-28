@@ -1,0 +1,6 @@
+<h1>Submission successful for {{work.task.name}} </h1>
+
+This submission added {{incremental_worktime}} hours to this task.<br>
+{% if not automatic_worktime %}<i>(The work time for this task is not calculated automatically and must be set manually by an admin.)</i>{% endif %}
+
+<a href="{% url 'knossos_aam_backend:home' %}">Back</a>

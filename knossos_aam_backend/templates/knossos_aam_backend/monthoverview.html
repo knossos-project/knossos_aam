@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Time overview for month {{year}} - {{month}}</h1>
+<i>Times printed in italics could not be calculated automatically.</i>
+<h3>Sort by projects: </h3> 
+    <form action="{% url 'knossos_aam_backend:sort_by_project' %}	" method="post">
+        {% csrf_token %}
+        <button type="submit" name="sort_by_project_month" value="{{ month }}">Sort by projects</button></td>
+        <input type="hidden" name="sort_by_project_year" value="{{ year }}">
+    </form>
+
+<h2>Totals</h2>
+<table id="boxtable">
+<tr>
+<th>Employee</th>
+<th>Total hours</th>
+</tr>
+{% for e, years in totals.items %}
+{% for y, months in years.items %}
+{% for m, total in months.items %}
+<tr>
+<td>{{e.user.first_name}} {{e.user.last_name}}</td>
+<td>{% if total.1 %}<i>{% endif %}{{total.0}}{% if total.1 %}</i>{% endif %}</td>
+</tr>
+{% endfor %}
+{% endfor %}
+{% endfor %}
+</table>
+
+<h2>Details</h2>
+
+<table id="boxtable">
+<tr>
+<th>Employee</th>
+<th>Task</th>
+<th>Total hours</th>
+</tr>
+{% for e, years in per_task.items %}
+{% for y, months in years.items %}
+{% for m, tasks in months.items %}
+{% for t, time in tasks.items %}
+<tr>
+<td>{{e.user.first_name}} {{e.user.last_name}}</td>
+<td>{{t.name}}</td>
+<td>{% if time.1 %}<i>{% endif %}{{time.0}}{% if time.1 %}</i>{% endif %}</td>
+</tr>
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+</table>
+{% endblock %}

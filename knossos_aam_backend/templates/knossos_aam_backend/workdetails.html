@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>Details for work on {{ work.task.name }}</h1>
+
+<h2>All submissions</h2>
+<form action="{% url 'knossos_aam_backend:changetask' %}" method="post">
+{% csrf_token %}
+    <table id="boxtable">
+    <tr>
+        <th>Date</th>
+        <th>Work time</th>
+        <th>Comment</th>
+        <th>Filename</th>
+        <th>Final?</th>
+        <th>Delete</th>
+    </tr>
+    {% for s in submissions %}
+        <tr>
+            <td>{{s.date}}</td>
+            <td>{{s.worktime_string}}</td>
+            <td>{{s.comment}}</td>
+            <td>{{s.original_filename}}</td>
+            <td>{{s.isfinal}}</td>
+            {% if s == s.work.latest_submission and s.date.month == date.month %}
+            <td><button type="submit" name="delete_sub_id" value="{{ s.id }}">Delete</button></td>
+            {% else %}
+            <td></td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+</form>
+
+<h2>Work time by month</h2>
+<table id="boxtable">
+<tr>
+    <th>Year</th>
+    <th>Month</th>
+    <th>Time</th>
+</tr>
+{% for y, months in time_by_year.items %}
+    {% for m, time in months.items %}
+    <tr>
+        <td>{{ y }}</td>
+        <td>{{ m }}</td>
+        <td>{% if time.1 %}<i>{% endif %}{{ time.0 }}{% if time.1 %}</i>{% endif %}</td>
+    </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+{% endblock %}
