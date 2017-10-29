@@ -28,8 +28,8 @@ def home_view(request):
     Returns active, completed work and available tasks to home view.
 
     Function receives a HttpRequest object which has the logged in user as
-    attribute. Work objects of this user which are not final as well as the 
-    ones that are final are filtered out and collected. All active Tasks 
+    attribute. Work objects of this user which are not final as well as the
+    ones that are final are filtered out and collected. All active Tasks
     of the users task category are grouped.
 
     Parameters:
@@ -43,6 +43,8 @@ def home_view(request):
     active_work = aami.get_active_work(employee)
     completed_work = aami.get_completed_work(employee)
     available_tasks_by_cat, availabe_tasks = aami.get_available_tasks(employee)
+
+    request.session['is_admin'] = admin_check(request.user)
 
     context = {'firstname': request.user.first_name,
                'employee': employee,
@@ -126,7 +128,7 @@ def usertime_view(request):
     context = {'employee': e,
                'totals': worktime_overview['by_month_totals'],
                'per_task': worktime_overview['by_month_per_task']}
-    
+
     return render(request, 'knossos_aam_backend/usertime.html', context)
 
 
@@ -192,7 +194,7 @@ def monthoverview_sort_by_project_view(request, year, month):
                'totals': timeoverview_project_totals,
                'per_task': timeoverview_project_details, }
 
-    return render(request, 'knossos_aam_backend/monthoverview_projects.html', context)  
+    return render(request, 'knossos_aam_backend/monthoverview_projects.html', context)
 
 
 @login_required
@@ -265,11 +267,11 @@ def timeoverview_view(request):
 def timeoverview_sort_by_project_view(request):
     timeoverview_project_totals = {}
     timeoverview_project_details = {}
-    
+
     for p in Project.objects.all():
         timeoverview_employee_totals = {}
         timeoverview_employee_details = {}
-        
+
         for e in p.employee_set.all():
             timeoverview_employee_totals[e] = {}
             timeoverview_employee_details[e] = {}
@@ -288,7 +290,7 @@ def timeoverview_sort_by_project_view(request):
     context = {'totals': timeoverview_project_totals,
                'per_task': timeoverview_project_details}
 
-    return render(request, 'knossos_aam_backend/timeoverview_projects.html', context)         
+    return render(request, 'knossos_aam_backend/timeoverview_projects.html', context)
 
 @login_required
 @user_passes_test(admin_check)
@@ -311,7 +313,7 @@ def download_task_file_view(request, filename):
         filename).rstrip('\n')
 
     with open(path_to_file, 'r') as f:
-        task_file = f.read()    
+        task_file = f.read()
 
     response = HttpResponse(task_file, content_type='application/nml')
     response['Content-Length'] = os.path.getsize(path_to_file)
@@ -321,7 +323,7 @@ def download_task_file_view(request, filename):
     return response
 
     # using apache modxsendfile seems to be the "better way" because the file doesn't need
-    # to be read by django into memory first. But this requires apache setup    
+    # to be read by django into memory first. But this requires apache setup
     #response = HttpResponse(mimetype='application/force-download')
     #response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
     #response['X-Sendfile'] = encoding.smart_str(path_to_file)

@@ -3,8 +3,26 @@ html { box-sizing: border-box }
 * { margin: 0; padding: 0 }
 img, svg { max-width: 100% }
 
+h1, h2 {
+	font-weight: bold;
+}
+
+h1 {
+	font-size: 28px;
+	margin-bottom: 20px;
+}
+
+.table-body > tr > td, .table-head > tr > th {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+td, thead {
+	line-height: 1.5;
+}
+
 .container {
-	width: 640px;
+	width: 800px;
 	max-width: 90%;
 }
 .container.-small {width: 320px; }
@@ -27,9 +45,25 @@ table.-with-gutter td {padding: 0 20px; }
 table.-with-gutter td + td {padding-top: 5px; }
 table.-middle td {vertical-align: middle; }
 
+.section-heading {
+	margin-bottom: 10px;
+	line-height: 29px;
+	padding: 0 10px;
+	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+	border: 1px solid #e8c6a0;
+	border-bottom-color: #d5b594;
+	border-radius: 3px;
+	background-image: linear-gradient(to bottom, #feebd1, #fad6ab);
+	box-shadow: inset 0 1px rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.05);
+	color: #465a6b;
+	background: #d1ecfe;
+	border-color: #a0c9f5 #95bfe5 #91b6dd;
+	background-image: linear-gradient(to bottom, #dff2fe, #b0dcfe);
+}
+
 .LoginSite {
 	background-color: #fff;
-	 /*background: #fff url(/static/back.jpg) center center no-repeat;*/
+	/*background: #fff url(/static/back.jpg) center center no-repeat;*/
 }
 
 ._full-height {height: 100%; }
@@ -40,4 +74,8 @@ table.-middle td {vertical-align: middle; }
 ._left {margin-left: 0; margin-right: auto; }
 ._right {margin-left: auto; margin-right: 0; }
 ._mt-10 {margin-top: 10px;}
+._mt-20 {margin-top: 20px;}
+._mt-40 {margin-top: 40px;}
 ._mb-10 {margin-bottom: 10px;}
+._content-margin {margin-top: 20px;}
+._content-padding {padding: 20px;}
