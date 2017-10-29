@@ -7,5 +7,5 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^', include('knossos_aam_backend.urls', namespace = "knossos_aam_backend")),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/?$', include(admin.site.urls)),
 ]
