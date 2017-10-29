@@ -1,11 +1,17 @@
-#!/usr/bin/env /usr/bin/python2.7
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import sys
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "knossos_aam.settings")
-
-    from django.core.management import execute_from_command_line
-
-    execute_from_command_line(sys.argv)
+	import django
+    from django.core import management
+    if sys.argv[1] == "init":
+    	django.setup()
+    	management.call_command("makemigrations", verbosity=1)
+    	management.call_command("migrate", verbosity=1)
+    	management.call_command("makemigrations", "knossos_aam_backend", verbosity=1)
+    	management.call_command("migrate", verbosity=1)
+    else:
+    	management.execute_from_command_line(sys.argv)
