@@ -296,7 +296,8 @@ def timeoverview_sort_by_project_view(request):
 @user_passes_test(admin_check)
 def employee_work_overview(request):
     emp_set = aami.get_employees_current_work()
-    context = {"employees": emp_set}
+    context = { "employees": emp_set,
+                "projects": Project.objects.all() }
     return render(request, "knossos_aam_backend/employees_current_work_view.html", context)
 
 

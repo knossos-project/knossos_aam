@@ -419,16 +419,21 @@ def get_monthly_worktime_for_submissions(submission_set):
 def get_monthly_worktime_for_work(w):
     return get_monthly_worktime_for_submissions(w.submission_set)
 
+def get_employee_info(emp):
+    work = get_active_work(emp)
+    info = {}
+    info["name"] = " ".join([emp.user.first_name, emp.user.last_name])
+    if len(work) > 0:
+        work = work[0]
+        info["project"] = work.task.category.project
+        info["task_name"] = work.task.name
+        info["work_time"] = work.worktime
+        info["last_submit"] = work.last_submission.datafile
+    return info
+
 def get_employees_current_work():
     emp_set = {}
-    work_set = {}
     for emp in models.Employee.objects.all():
         work = get_active_work(emp)
-        work_set[emp] = work
-        emp_set[emp] = {}
-        if len(work) > 0:
-            work = work[0]
-            emp_set[emp]["task_name"] = work.task.name
-            emp_set[emp]["work_time"] = work.worktime
-            emp_set[emp]["last_submit"] = work.last_submission.datafile
+        emp_set[emp] = get_employee_info(emp)
     return emp_set
