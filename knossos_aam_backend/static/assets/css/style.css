@@ -1,0 +1,43 @@
+html { box-sizing: border-box }
+*, *:before, *:after { box-sizing: inherit }
+* { margin: 0; padding: 0 }
+img, svg { max-width: 100% }
+
+.container {
+	width: 640px;
+	max-width: 90%;
+}
+.container.-small {width: 320px; }
+
+.row {display: table; }
+.row > .col {display: table-cell; }
+.col.-middle {vertical-align: middle; }
+
+.popover.-box {
+	position: static;
+	max-width: 100%;
+}
+.popover.-box::before, .popover.-box::after, .popover.-box h6::before {display: none; }
+.popover h2 {
+	font-weight: bold;
+	margin: 10px 20px 5px;
+}
+
+table.-with-gutter td {padding: 0 20px; }
+table.-with-gutter td + td {padding-top: 5px; }
+table.-middle td {vertical-align: middle; }
+
+.LoginSite {
+	background-color: #fff;
+	 /*background: #fff url(/static/back.jpg) center center no-repeat;*/
+}
+
+._full-height {height: 100%; }
+._full-width {width: 100%; }
+._text-center {text-align: center; }
+._text-right {text-align: right; }
+._center {margin-left: auto; margin-right: auto; }
+._left {margin-left: 0; margin-right: auto; }
+._right {margin-left: auto; margin-right: 0; }
+._mt-10 {margin-top: 10px;}
+._mb-10 {margin-bottom: 10px;}
