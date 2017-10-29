@@ -1,2 +1,5 @@
 *.html.bak
 *.pyc
+*.DS_Store
+*.egg-info
+knossos_aam_backend/migrations
