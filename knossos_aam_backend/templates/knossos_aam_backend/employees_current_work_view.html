@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Hi, {{ firstname }}.</h1>
+<table>
+{% for employee, info in employees.items %}
+<tr>
+	<td>{{ employee.user.username }}</td>
+	<td>{{ info.task_name }}</td>
+	<td>{{ info.work_time }}</td>
+	<td>{{ info.last_submit }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

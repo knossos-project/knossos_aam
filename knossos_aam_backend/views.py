@@ -290,6 +290,13 @@ def timeoverview_sort_by_project_view(request):
 
     return render(request, 'knossos_aam_backend/timeoverview_projects.html', context)         
 
+@login_required
+@user_passes_test(admin_check)
+def employee_work_overview(request):
+    emp_set = aami.get_employees_current_work()
+    context = {"employees": emp_set}
+    return render(request, "knossos_aam_backend/employees_current_work_view.html", context)
+
 
 @login_required
 def error_view(request, error_string):

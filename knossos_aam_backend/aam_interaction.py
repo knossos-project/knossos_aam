@@ -14,6 +14,7 @@ from general_utilities.versions import compare_version
 from models import Work
 from models import Submission
 from models import Task
+from models import Employee
 from view_helpers import TooManyActiveTasks
 from view_helpers import UserRace
 from view_helpers import InvalidSubmission
@@ -420,3 +421,17 @@ def get_monthly_worktime_for_submissions(submission_set):
 
 def get_monthly_worktime_for_work(w):
     return get_monthly_worktime_for_submissions(w.submission_set)
+
+def get_employees_current_work():
+    emp_set = {}
+    work_set = {}
+    for emp in Employee.objects.all():
+        work = get_active_work(emp)
+        work_set[emp] = work
+        emp_set[emp] = {}
+        if len(work) > 0:
+            work = work[0]
+            emp_set[emp]["task_name"] = work.task.name
+            emp_set[emp]["work_time"] = work.worktime
+            emp_set[emp]["last_submit"] = work.last_submission.datafile
+    return emp_set
