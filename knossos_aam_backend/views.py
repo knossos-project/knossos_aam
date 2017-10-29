@@ -13,15 +13,7 @@ from django.utils import timezone
 from django.utils import encoding
 import os
 from models import Employee, Work, Submission, Project
-from aam_interaction import get_active_work
-from aam_interaction import get_completed_work
-from aam_interaction import get_available_tasks
-from aam_interaction import reset_task
-from aam_interaction import delete_submission
-from aam_interaction import unfinalize_work
-from aam_interaction import get_monthly_worktime_for_submissions
-from aam_interaction import get_monthly_worktime_for_work
-from aam_interaction import cancel_task
+import aam_interaction as aami
 from view_helpers import admin_check
 
 from django.conf import settings
@@ -48,9 +40,9 @@ def home_view(request):
 
     employee = Employee.objects.get(user=request.user)
 
-    active_work = get_active_work(employee)
-    completed_work = get_completed_work(employee)
-    available_tasks_by_cat, availabe_tasks = get_available_tasks(employee)
+    active_work = aami.get_active_work(employee)
+    completed_work = aami.get_completed_work(employee)
+    available_tasks_by_cat, availabe_tasks = aami.get_available_tasks(employee)
 
     context = {'firstname': request.user.first_name,
                'employee': employee,
@@ -65,7 +57,7 @@ def home_view(request):
 def workdetails_view(request, work_id):
     w = get_object_or_404(Work, pk=work_id)
     submissions = w.submission_set.order_by('date')
-    worktime_overview = get_monthly_worktime_for_work(w)
+    worktime_overview = aami.get_monthly_worktime_for_work(w)
 
     context = {'submissions': submissions,
                'work': w,
@@ -82,7 +74,7 @@ def reset_task_view(request):
         return render(request, 'knossos_aam_backend/reset_task.html', {})
 
     try:
-        reset_task(request.POST['task'], request.POST['username'])
+        aami.reset_task(request.POST['task'], request.POST['username'])
         return render(
             request, 'knossos_aam_backend/reset_task_performed.html', {'success': True})
     except:
@@ -97,7 +89,7 @@ def cancel_task_view(request):
         return render(request, 'knossos_aam_backend/cancel_task.html', {})
 
     try:
-        cancel_task(request.POST['task'], request.POST['username'])
+        aami.cancel_task(request.POST['task'], request.POST['username'])
         return render(
             request, 'knossos_aam_backend/cancel_task_performed.html', {
                 'success': True, 'reason': None})
@@ -112,12 +104,12 @@ def changetask_view(request):
     employee = Employee.objects.get(user=request.user)
 
     if 'reopen_work_id' in request.POST:
-        unfinalize_work(employee, request.POST['reopen_work_id'])
+        aami.unfinalize_work(employee, request.POST['reopen_work_id'])
 
     elif 'delete_sub_id' in request.POST:
         sub = Submission.objects.get(pk=request.POST['delete_sub_id'])
         work = Work.objects.get(pk=sub.work_id)
-        delete_submission(sub)
+        aami.delete_submission(sub)
 
         return HttpResponseRedirect(
             reverse('knossos_aam_backend:workdetails', args=(work.id, )))
@@ -129,7 +121,7 @@ def changetask_view(request):
 def usertime_view(request):
     e = get_object_or_404(Employee, user=request.user)
     s = Submission.objects.filter(employee=e)
-    worktime_overview = get_monthly_worktime_for_submissions(s)
+    worktime_overview = aami.get_monthly_worktime_for_submissions(s)
 
     context = {'employee': e,
                'totals': worktime_overview['by_month_totals'],
@@ -153,7 +145,7 @@ def monthoverview_view(request, year, month):
             date__year=year,
             date__month=month, )
 
-        worktime_overview = get_monthly_worktime_for_submissions(subs)
+        worktime_overview = aami.get_monthly_worktime_for_submissions(subs)
 
         timeoverview_totals[e] = worktime_overview['by_month_totals']
         timeoverview_details[e] = worktime_overview['by_month_per_task']
@@ -185,7 +177,7 @@ def monthoverview_sort_by_project_view(request, year, month):
                 date__year=year,
                 date__month=month, )
  
-            worktime_overview = get_monthly_worktime_for_submissions(subs)
+            worktime_overview = aami.get_monthly_worktime_for_submissions(subs)
 
             timeoverview_employee_totals[e] = \
                 worktime_overview['by_month_totals']
@@ -257,7 +249,7 @@ def timeoverview_view(request):
         timeoverview_totals[e] = {}
         timeoverview_details[e] = {}
 
-        worktime_overview = get_monthly_worktime_for_submissions(e.submission_set)
+        worktime_overview = aami.get_monthly_worktime_for_submissions(e.submission_set)
 
         timeoverview_totals[e] = worktime_overview['by_month_totals']
         timeoverview_details[e] = worktime_overview['by_month_per_task']
@@ -282,7 +274,7 @@ def timeoverview_sort_by_project_view(request):
             timeoverview_employee_totals[e] = {}
             timeoverview_employee_details[e] = {}
  
-            worktime_overview = get_monthly_worktime_for_submissions(
+            worktime_overview = aami.get_monthly_worktime_for_submissions(
                 e.submission_set)
 
             timeoverview_employee_totals[e] = \
