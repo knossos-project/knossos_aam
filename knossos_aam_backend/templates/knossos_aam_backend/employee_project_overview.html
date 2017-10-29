@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<section class="_content-margin">
+	{% for project, infolist in projects.items %}
+	<h1>{{ project.name }}</h1>
+	<table class="table">
+		<thead class="table-head">
+			<tr>
+				<th>Name</th>
+				<th>Current Task</th>
+				<th>Last Submission</th>
+				<th>Work Time</th>
+			</tr>
+		</thead>
+		<tbody class="table-body">
+			{% for info in infolist %}
+			<tr>
+				<td>{{ info.name }}</td>
+				<td>{{ info.task_name }}</td>
+				<td>{{ info.work_time }}</td>
+				<td>{{ info.last_submit }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endfor %}
+</section>
+{% endblock %}

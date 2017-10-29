@@ -437,3 +437,10 @@ def get_employees_current_work():
         work = get_active_work(emp)
         emp_set[emp] = get_employee_info(emp)
     return emp_set
+
+def get_employee_infos_in_project(proj):
+    employees = models.Employee.objects.filter(project=proj)
+    emp_infos = []
+    for emp in employees:
+        emp_infos.append(get_employee_info(emp))
+    return emp_infos

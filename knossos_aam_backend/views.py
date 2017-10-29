@@ -300,6 +300,14 @@ def employee_work_overview(request):
                 "projects": Project.objects.all() }
     return render(request, "knossos_aam_backend/employees_current_work_view.html", context)
 
+@login_required
+@user_passes_test(admin_check)
+def employee_project_overview(request):
+    projects ={}
+    for proj in Project.objects.all():
+        projects[proj] = aami.get_employee_infos_in_project(proj)
+    context = { "projects": projects }
+    return render(request, "knossos_aam_backend/employee_project_overview.html", context)
 
 @login_required
 def error_view(request, error_string):

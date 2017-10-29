@@ -52,6 +52,7 @@ urlpatterns = [
             views.logout_view,
             name='logout'),
         url(r"^employee_work_overview/?$", views.employee_work_overview, name="employee_work_overview"),
+        url(r"^employee_project_overview/?$", views.employee_project_overview, name="employee_project_overview"),
 
         # for KNOSSOS
         url(r'api/2/session/?$', views_api.session_api_view),
