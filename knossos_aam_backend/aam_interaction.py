@@ -11,10 +11,7 @@ import zipfile
 import re
 from knossos_utils.skeleton import Skeleton
 from general_utilities.versions import compare_version
-from models import Work
-from models import Submission
-from models import Task
-from models import Employee
+import models
 from view_helpers import TooManyActiveTasks
 from view_helpers import UserRace
 from view_helpers import InvalidSubmission
@@ -50,7 +47,7 @@ def get_active_work(em):
     active_work : list of Work instances
     """
 
-    active_work = Work.objects.filter(
+    active_work = models.Work.objects.filter(
             employee=em,
             is_final=False,
             )
@@ -76,7 +73,7 @@ def get_completed_work(em):
     completed_work : list of Work instances
     """
 
-    completed_work = Work.objects.filter(
+    completed_work = models.Work.objects.filter(
             employee=em,
             is_final=True,
             )
@@ -134,11 +131,11 @@ def get_available_tasks(em, count=1):
 
 
 def reset_task(task, username):
-    s = Submission.objects.filter(
+    s = models.Submission.objects.filter(
             employee__user__username=username,
             work__task__name=task)
     s.delete()
-    w = Work.objects.get(employee__user__username__exact=username,
+    w = models.Work.objects.get(employee__user__username__exact=username,
                          task__name=task)
     w.worktime = 0.
     w.is_final = False
@@ -148,14 +145,14 @@ def reset_task(task, username):
 
 
 def unfinalize_work(employee, work_id):
-    w = Work.objects.get(pk=work_id)
+    w = models.Work.objects.get(pk=work_id)
 
     w.is_final = False
     w.save()
 
 
 def cancel_task(task, username):
-    w = Work.objects.get(
+    w = models.Work.objects.get(
         task__name=task,
         employee__user__username=username, )
 
@@ -166,16 +163,16 @@ def cancel_task(task, username):
 
 
 def choose_task(employee, task_id):
-    active_work = Work.objects.filter(
+    active_work = models.Work.objects.filter(
         employee=employee, is_final=False)
     if not len(active_work) == 0:
         raise TooManyActiveTasks()
 
-    task = Task.objects.get(pk=task_id)
+    task = models.Task.objects.get(pk=task_id)
     if task.target_coverage > task.current_coverage:
-        Work.objects.create(
+        models.Work.objects.create(
             started=timezone.now(),
-            task=Task.objects.get(pk=task_id),
+            task=models.Task.objects.get(pk=task_id),
             employee=employee,
             is_final=False,)
     else:
@@ -252,7 +249,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
                 'The maximal file name length for submissions is '
                 '200 character.')
 
-    work = Work.objects.get(pk=submit_work_id)
+    work = models.Work.objects.get(pk=submit_work_id)
 
     # testing for .k.zip is problematic, just do zip - django itself removes
     # the k sometimes (e.g. when changing the filename of task files
@@ -348,7 +345,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
         #mail_notify('to@example.com', subject, submit_comment,
         #            attachments=attachments, reply_to=work.employee.user.email)
 
-    s = Submission.objects.create(
+    s = models.Submission.objects.create(
         employee=employee,
         date=timezone.now(),
         work=work,
@@ -425,7 +422,7 @@ def get_monthly_worktime_for_work(w):
 def get_employees_current_work():
     emp_set = {}
     work_set = {}
-    for emp in Employee.objects.all():
+    for emp in models.Employee.objects.all():
         work = get_active_work(emp)
         work_set[emp] = work
         emp_set[emp] = {}
