@@ -5,13 +5,56 @@ import sys
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "knossos_aam.settings")
-	import django
     from django.core import management
+
     if sys.argv[1] == "init":
-    	django.setup()
-    	management.call_command("makemigrations", verbosity=1)
-    	management.call_command("migrate", verbosity=1)
-    	management.call_command("makemigrations", "knossos_aam_backend", verbosity=1)
-    	management.call_command("migrate", verbosity=1)
+        import django
+        import getpass
+        import json
+        from psycopg2 import connect
+        from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+        # host and port
+        host = raw_input("Enter server hostname (default localhost):")
+        if host == "": host = "localhost"
+        port = raw_input("Enter port number (default: 5432):")
+        if port == "": port = "5432"
+        # db name
+        dbname = raw_input("Choose a database name (default: knossos_aam):")
+        if dbname == "": dbname = "knossos_aam"
+        # db user
+        print("Create a database user:")
+        username = raw_input("• Enter username (default: aam):")
+        if username == "": username = "aam"
+        email = raw_input("• Enter email address:")
+        passprompt = lambda: (getpass.getpass("• Choose password:"), getpass.getpass("• Retype password:"))
+        p1, p2 = passprompt()
+        while p1 != p2:
+            print("Passwords do not match. Try again.")
+            p1, p2 = passprompt()
+
+        # setup database
+        with connect(dbname="postgres", user="postgres") as connection:
+            connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            with connection.cursor() as cursor:
+                cursor.execute("CREATE USER " + username + " WITH SUPERUSER CREATEDB CREATEROLE PASSWORD '" + p1 + "'")
+                cursor.execute("CREATE DATABASE " + dbname + " WITH OWNER " + username + " ENCODING 'utf8'")
+        # setup django
+        defaultdb = {}
+        defaultdb["ENGINE"] = "django.db.backends.postgresql_psycopg2"
+        defaultdb["NAME"] = dbname
+        defaultdb["USER"] = username
+        defaultdb["PASSWORD"] = p1
+        defaultdb["HOST"] = host
+        defaultdb["PORT"] = port
+        with open("defaultdb.txt", "w") as dbfile:
+            json.dump(defaultdb, dbfile)
+
+        django.setup() # setup after defaultdb has been specified
+        management.call_command("makemigrations", verbosity=1)
+        management.call_command("migrate", verbosity=1)
+        management.call_command("makemigrations", "knossos_aam_backend", verbosity=1)
+        management.call_command("migrate", verbosity=1)
+        from django.contrib.auth.models import User
+        User.objects.create_superuser(username, email, p1)
     else:
-    	management.execute_from_command_line(sys.argv)
+        management.execute_from_command_line(sys.argv)

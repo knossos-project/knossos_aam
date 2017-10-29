@@ -8,17 +8,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'knossos_aam',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': 'username',
-        'PASSWORD': 'password',
-        'HOST': '127.0.0.1',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '5432',                      # Set to empty string for default.
-    }
-}
+import json
+DATABASES = {}
+with open("defaultdb.txt", "r") as defaultdb:
+    DATABASES["default"] = json.load(defaultdb)
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.11/ref/settings/#allowed-hosts
