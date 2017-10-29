@@ -1,16 +1,26 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 {% block main %}
-<h1>Hi, {{ firstname }}.</h1>
-<table>
-{% for employee, info in employees.items %}
-<tr>
-	<td>{{ employee.user.username }}</td>
-	<td>{{ info.task_name }}</td>
-	<td>{{ info.work_time }}</td>
-	<td>{{ info.last_submit }}</td>
-</tr>
-{% endfor %}
-</table>
-
+<section class="_content-margin">
+	<table class="table">
+		<thead class="table-head">
+			<tr>
+				<th>Username</th>
+				<th>Task Name</th>
+				<th>Work Time</th>
+				<th>Last Submission</th>
+			</tr>
+		</thead>
+		<tbody class="table-body">
+			{% for employee, info in employees.items %}
+			<tr>
+				<td>{{ employee.user.username }}</td>
+				<td>{{ info.task_name }}</td>
+				<td>{{ info.work_time }}</td>
+				<td>{{ info.last_submit }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</section>
 {% endblock %}
