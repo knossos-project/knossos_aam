@@ -2,21 +2,22 @@
 Views - should mostly be thin functions for formatting the input / output,
 with actual business logic being performed in aam_interaction.py.
 """
-
+import json
+import os
 
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.utils import timezone
 from django.utils import encoding
-import os
-from models import Employee, Work, Submission, Project
+
 import aam_interaction as aami
+from models import Employee, Work, Submission, Project
 from view_helpers import admin_check
 
-from django.conf import settings
 
 
 __author__ = 'Fabian Svara'
@@ -292,9 +293,18 @@ def timeoverview_sort_by_project_view(request):
 
     return render(request, 'knossos_aam_backend/timeoverview_projects.html', context)
 
+def move_employees_helper(request):
+    put_data = json.loads(request.body.decode("utf-8"))
+    project = get_object_or_404(Project, name=put_data["project"])
+    employees = Employee.objects.filter(user__username__in=put_data["employees"])
+    aami.move_employees_to_project(employees, project)
+
 @login_required
 @user_passes_test(admin_check)
 def employee_work_overview(request):
+    if request.method == "POST":
+        move_employees_helper(request)
+
     emp_set = aami.get_employees_current_work()
     context = { "employees": emp_set,
                 "projects": Project.objects.all() }
@@ -303,7 +313,10 @@ def employee_work_overview(request):
 @login_required
 @user_passes_test(admin_check)
 def employee_project_overview(request):
-    projects ={}
+    if request.method == "POST":
+        move_employees_helper(request)
+
+    projects = {}
     for proj in Project.objects.all():
         projects[proj] = aami.get_employee_infos_in_project(proj)
     context = { "projects": projects }

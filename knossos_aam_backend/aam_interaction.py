@@ -5,6 +5,7 @@ logic goes here.
 
 __author__ = 'Fabian Svara'
 
+from django.db import transaction
 from django.utils import timezone
 from cStringIO import StringIO
 import zipfile
@@ -445,3 +446,9 @@ def get_employee_infos_in_project(proj):
     for emp in employees:
         emp_infos.append(get_employee_info(emp))
     return emp_infos
+
+def move_employees_to_project(employees, new_project):
+    with transaction.atomic():
+        for employee in employees:
+            employee.project = new_project
+            employee.save()
