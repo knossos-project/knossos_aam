@@ -1,26 +1,105 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<section class="_content-margin">
-	<table class="table">
-		<thead class="table-head">
-			<tr>
-				<th>Username</th>
-				<th>Task Name</th>
-				<th>Work Time</th>
-				<th>Last Submission</th>
-			</tr>
-		</thead>
-		<tbody class="table-body">
-			{% for employee, info in employees.items %}
-			<tr>
-				<td>{{ employee.user.username }}</td>
-				<td>{{ info.task_name }}</td>
-				<td>{{ info.work_time }}</td>
-				<td>{{ info.last_submit }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+<section class="two-pane _content-margin">
+	<article>
+		<table class="table">
+			<thead class="table-head">
+				<tr>
+					<th></th>
+					<th>Full Name</th>
+					<th>Project</th>
+					<th>Task Name</th>
+					<th>Work Time</th>
+					<th>Last Submission</th>
+				</tr>
+			</thead>
+			<tbody class="table-body">
+				{% for employee, info in employees.items %}
+				<tr>
+					<td>
+						<label class="option">
+							<input type="checkbox" data-id="{{ employee.user.username }}" onchange="checkUser(this)">
+							<span class="checkbox"></span>
+						</label>
+					</td>
+					<td>{{ info.name }}</td>
+					<td>{{ info.project }}</td>
+					<td>{{ info.task_name }}</td>
+					<td>{{ info.work_time }}</td>
+					<td>{{ info.last_submit }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</article>
+
+	<aside>
+		<div class="button-dropdown">
+			<a href="#" class="button">Move to Project</a>
+			<a class="button toggle">More</a>
+			<ul class="dropdown">
+				{% for project in projects %}
+				<li><a href="javascript:void(0)" onclick="moveToProject(this.dataset.project)" data-project="{{ project.name }}">{{ project.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</aside>
 </section>
+{% endblock %}
+
+{% block script %}
+<script>
+	$(document).ready(function () {
+		function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie != '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = jQuery.trim(cookies[i]);
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
+
+		function csrfSafeMethod(method) {
+	    	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		}
+
+		$.ajaxSetup({
+			beforeSend: function(xhr, settings) {
+				if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			}
+		});
+	});
+
+	var checkedUsers = new Set();
+
+	function moveToProject (projectName) {
+		$.ajax({
+			url: window.location.href,
+			method: 'PUT',
+			data: {
+				employees: Array.from(checkedUsers),
+				project: projectName
+			},
+			success: function () {
+				window.location.reload();
+			}
+		});
+	}
+
+	function checkUser (checkbox) {
+		var userId = checkbox.dataset.id;
+		checkbox.checked ? checkedUsers.add(userId) : checkedUsers.delete(userId);
+	}
+</script>
 {% endblock %}

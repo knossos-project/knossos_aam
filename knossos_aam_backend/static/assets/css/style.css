@@ -12,6 +12,11 @@ h1 {
 	margin-bottom: 20px;
 }
 
+.table input:checked + .checkbox::before {
+	height: 6px;
+	width: 10px;
+}
+
 .table-body > tr > td, .table-head > tr > th {
 	padding-top: 8px;
 	padding-bottom: 8px;
@@ -22,7 +27,7 @@ td, thead {
 }
 
 .container {
-	width: 800px;
+	/*width: 800px;*/
 	max-width: 90%;
 }
 .container.-small {width: 320px; }
@@ -63,7 +68,20 @@ table.-middle td {vertical-align: middle; }
 
 .LoginSite {
 	background-color: #fff;
-	/*background: #fff url(/static/back.jpg) center center no-repeat;*/
+}
+
+.two-pane {
+	transform: translateZ(1);
+}
+
+.two-pane article {
+	width: 90%;
+}
+.two-pane aside {
+	margin: 10px;
+	top: 0;
+	right: 0;
+	position: fixed;
 }
 
 ._full-height {height: 100%; }
