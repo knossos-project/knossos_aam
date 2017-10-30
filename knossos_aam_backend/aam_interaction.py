@@ -425,9 +425,9 @@ def get_employee_info(emp):
     info = {}
     info["name"] = " ".join([emp.user.first_name, emp.user.last_name])
     info["username"] = " ".join([emp.user.username])
+    info["project"] = emp.project.name
     if len(work) > 0:
         work = work[0]
-        info["project"] = work.task.category.project
         info["task_name"] = work.task.name
         info["work_time"] = work.worktime
         info["last_submit"] = work.last_submission.datafile
