@@ -62,15 +62,12 @@
 	var checkedUsers = new Set();
 
 	function moveToProject (projectName) {
-		$.ajax({
+		$.post({
 			url: window.location.href,
-			method: 'PUT',
 			data: JSON.stringify({
 				employees: Array.from(checkedUsers),
 				project: projectName
 			}),
-			contentType: 'application/json; charset=utf-8',
-        	dataType: 'json',
 			success: function () {
 				window.location.reload(true);
 			}
