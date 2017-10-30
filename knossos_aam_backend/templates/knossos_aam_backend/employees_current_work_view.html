@@ -15,8 +15,8 @@
 					<th>Full Name</th>
 					<th>Project</th>
 					<th>Task Name</th>
-					<th>Work Time</th>
 					<th>Last Submission</th>
+					<th>Work Time</th>
 				</tr>
 			</thead>
 			<tbody class="table-body">
@@ -31,8 +31,8 @@
 					<td>{{ info.name }}</td>
 					<td>{{ info.project }}</td>
 					<td>{{ info.task_name }}</td>
-					<td>{{ info.work_time }}</td>
 					<td>{{ info.last_submit }}</td>
+					<td>{{ info.work_time }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -59,15 +59,12 @@
 	var checkedUsers = new Set();
 
 	function moveToProject (projectName) {
-		$.ajax({
+		$.post({
 			url: window.location.href,
-			method: 'PUT',
 			data: JSON.stringify({
 				employees: Array.from(checkedUsers),
 				project: projectName
 			}),
-			contentType: 'application/json; charset=utf-8',
-        	dataType: 'json',
 			success: function () {
 				window.location.reload(true);
 			}
