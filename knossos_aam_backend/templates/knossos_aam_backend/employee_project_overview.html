@@ -65,10 +65,12 @@
 		$.ajax({
 			url: window.location.href,
 			method: 'PUT',
-			data: {
+			data: JSON.stringify({
 				employees: Array.from(checkedUsers),
 				project: projectName
-			},
+			}),
+			contentType: 'application/json; charset=utf-8',
+        	dataType: 'json',
 			success: function () {
 				window.location.reload(true);
 			}
