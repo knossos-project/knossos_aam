@@ -16,7 +16,11 @@
 			<strong>Username or password wrong.</strong>
 		</p>
 		{% endif %}
+		{% if next %}
+		<form method="post" action="{% url 'knossos_aam_backend:login' %}?next={{next}}">
+		{% else %}
 		<form method="post" action="{% url 'knossos_aam_backend:login' %}">
+		{% endif %}
 			{% csrf_token %}
 			<div class="popover -box _center">
 				<h6>Login</h6>
