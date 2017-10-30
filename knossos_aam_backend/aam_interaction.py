@@ -370,7 +370,7 @@ def get_monthly_worktime_for_submissions(submission_set):
 
     by_month_per_task: { year: { month: { task: [worktime, is_final] } } }
     by_month_totals: { year: { month: [worktime, is_final] } }
-    
+
     """
 
     by_month_per_task = {}
@@ -423,6 +423,7 @@ def get_employee_info(emp):
     work = get_active_work(emp)
     info = {}
     info["name"] = " ".join([emp.user.first_name, emp.user.last_name])
+    info["username"] = " ".join([emp.user.username])
     if len(work) > 0:
         work = work[0]
         info["project"] = work.task.category.project
