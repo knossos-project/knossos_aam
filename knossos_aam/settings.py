@@ -75,7 +75,20 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'some_secret_key'
+try:
+    from .secret_key import SECRET_KEY
+except ImportError:
+    import os
+    from django.utils.crypto import get_random_string
+    def generate_secret_key(filename): # https://github.com/django/django/blob/9893fa12b735f3f47b35d4063d86dddf3145cb25/django/core/management/commands/startproject.py
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        get_random_string(50, chars)
+        with open(filename, "w") as key_file:
+            key_file.write("SECRET_KEY = '" + get_random_string(50, chars) + "'")
+
+    settings_dir = os.path.abspath(os.path.dirname(__file__))
+    generate_secret_key(os.path.join(settings_dir, 'secret_key.py'))
+    from .secret_key import SECRET_KEY
 
 TEMPLATES = [
     {
