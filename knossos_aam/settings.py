@@ -13,6 +13,9 @@ DATABASES = {}
 with open("defaultdb.txt", "r") as defaultdb:
     DATABASES["default"] = json.load(defaultdb)
 
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.11/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -104,6 +107,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
+                'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
