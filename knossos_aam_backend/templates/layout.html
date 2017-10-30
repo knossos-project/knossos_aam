@@ -12,6 +12,7 @@
 			<a href="{% url 'knossos_aam_backend:home' %}" class="button {% if request.path == '/' %}active{% endif %}">Home</a>
 			<a href="{% url 'knossos_aam_backend:usertime' %}" class="button">Time Overview</a>
 			{% if request.session.is_admin %}<a href="{% url 'knossos_aam_backend:employee_work_overview' %}" class="button {% if request.path == '/employee_work_overview' %}active{% endif %}">Employee Work Overview</a>{% endif %}
+			{% if request.session.is_admin %}<a href="{% url 'knossos_aam_backend:employee_project_overview' %}" class="button {% if request.path == '/employee_project_overview' %}active{% endif %}">Employee Project Overview</a>{% endif %}
 			<a href="{% url 'knossos_aam_backend:logout' %}" class="button">Logout</a>
 		</nav>
 
