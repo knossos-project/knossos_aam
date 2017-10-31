@@ -181,8 +181,7 @@ def email_on_submission(**kwargs):
                 port=465)
     ma.open_session()
 
-    subject = 'New %sSubmission Notification: %s by %s' % (
-        is_final_string, work.task.name, work.employee.user.username,)
+    subject = 'New {0} Submission Notification: {1} by {2}'.format(is_final_string, work.task.name, work.employee.user.username)
 
     ma.send_mail('sender@example.com',
                  ['recipient@example.com'],

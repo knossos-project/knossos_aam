@@ -32,10 +32,7 @@ def submission_filename(self, filename):
                       self.date.strftime('%Y%m%d-%H%M%S')
                          , ])
     fname += "-" + finalstring + extension if self.is_final else extension
-    abs_fname = '%s/%s/%s' % (
-        self.work.task.category.project.name,
-        self.work.task.category.name,
-        fname,)
+    abs_fname = '{0}/{1}/{2}'.format(self.work.task.category.project.name, self.work.task.category.name, fname)
 
     return abs_fname
 
@@ -52,8 +49,7 @@ def task_filename(self, filename):
 
     fname = '-'.join([self.category.name, self.name]) + extension
     fname = get_valid_filename(fname)
-    fname = 'task-files/%s/%s/%s' % (
-        self.category.project.name, self.category.name, fname)
+    fname = 'task-files/{0}/{1}/{2}'.format(self.category.project.name, self.category.name, fname)
 
     return fname
 

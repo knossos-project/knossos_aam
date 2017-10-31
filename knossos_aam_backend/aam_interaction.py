@@ -269,7 +269,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
     if checks_to_run and not skip_checks:
         check_fns = dict()
         for cur_check in checks_to_run:
-            exec ('from knossos_aam_backend.checks import %s' % (cur_check,))
+            exec ('from knossos_aam_backend.checks import {0}'.format(cur_check))
             cur_check_fn = locals()[cur_check]
             check_fns[cur_check] = cur_check_fn
 
@@ -337,8 +337,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
     # Send e-mail if comment is added to submission.
 
     if submit_comment:
-        subject = 'Comment on Submission of Task %s Task from %s' % (
-            work.task.name, employee.user.username,)
+        subject = 'Comment on Submission of Task {0} Task from {1}'.format(work.task.name, employee.user.username)
         attachments = [(skeleton_file_as_string, submit_file.name)]
         # todo get mailing to work again
         # mail_notify('to@example.com', subject, submit_comment,

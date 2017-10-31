@@ -34,27 +34,25 @@ class AAMApi(object):
 
         self.session = requests.Session()
         self.server = server
-        self.urls = {xx: '%s/%s' % (server, yy)
-                     for xx, yy in _actions.iteritems()}
+        self.urls = {xx: '{0}/{1}'.format(server, yy) for xx, yy in _actions.iteritems()}
 
     def login(self, username, password):
-        post_txt = '<login><username>%s</username>' \
-                   '<password>%s</password></login>' % (
-                       username, password,)
+        post_txt = '<login><username>{0}</username>' \
+                   '<password>{1}</password></login>'.format(username, password)
 
         r = self.session.post(self.urls['login'], post_txt)
         if r.status_code != 200:
-            raise AAMError('Login not successful. %s' % (r.content,))
+            raise AAMError('Login not successful. {0}'.format(r.content))
 
     def logout(self):
         r = self.session.get(self.urls['logout'])
         if r.status_code != 200:
-            raise AAMError('Logout not successful. %s' % (r.content,))
+            raise AAMError('Logout not successful. {0}'.format(r.content))
 
     def session_state(self):
         r = self.session.get(self.urls['session_state'])
         if r.status_code != 200:
-            raise AAMError('State request not successful. %s' % (r.content,))
+            raise AAMError('State request not successful. {0}'.format(r.content))
 
         session_status = json.loads(r.content)
         return session_status
@@ -70,7 +68,7 @@ class AAMApi(object):
         r = self.session.post(self.urls['submit'], post_text, files=files)
 
         if r.status_code != 201:
-            raise AAMError('Submission not successful. %s' % (r.content,))
+            raise AAMError('Submission not successful. {0}'.format(r.content))
 
     @staticmethod
     def _get_file_from_response(r):
@@ -86,10 +84,10 @@ class AAMApi(object):
     def download_current_file(self, out_dir):
         r = self.session.get(self.urls['current_file'])
         if r.status_code != 200:
-            raise AAMError('Download not successful. %s' % (r.content,))
+            raise AAMError('Download not successful. {0}'.format(r.content))
 
         fname, file_contents = self._get_file_from_response(r)
-        out_fname = '%s/%s' % (out_dir, fname,)
+        out_fname = '{0}/{1}'.format(out_dir, fname)
 
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
@@ -107,11 +105,10 @@ class AAMApi(object):
                 raise AAMUnfinishedTaskException(
                     'Starting new task not successful. Have unfinished task.')
             else:
-                raise AAMError('Starting new task not successful. %s' % (
-                    r.content,))
+                raise AAMError('Starting new task not successful. {0}'.format(r.content))
 
         fname, file_contents = self._get_file_from_response(r)
-        out_fname = '%s/%s' % (out_dir, fname,)
+        out_fname = '{0}/{1}'.format(out_dir, fname)
 
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)

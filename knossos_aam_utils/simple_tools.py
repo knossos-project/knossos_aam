@@ -22,11 +22,11 @@ def reset_task(username, task, month=None, delete_work=False):
         w.latestsubmit = None
         w.save()
 
-        print 'Reset %s' % (w,)
+        print 'Reset {0}'.format(w)
 
         if delete_work:
             w.delete()
-            print('Deleted %s' % (w,))
+            print('Deleted {1}'.format(w))
 
 
 def get_average_worktime(w):
@@ -48,7 +48,7 @@ def stats_for_task_set(t):
 
 def print_stats_for_task_set(t):
     for fname, avg_time, size in stats_for_task_set(t):
-        print('%s\t%s\t%s' % (fname, avg_time, size,))
+        print('{0}\t{1}\t{2}'.format(fname, avg_time, size))
 
 
 def copy_task(source_task, target_name, target_category):

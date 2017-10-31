@@ -62,7 +62,7 @@ def import_tasks(
 
                 s = skeleton_from_single_coordinate(
                     [x, y, z], comment='First Node', branchpoint=True)
-                task_filepath = '%s/%s_%s.nml' % (
+                task_filepath = '{0}/{1}_{2}.nml'.format(
                     AUTO_GENERATED_NML_DIR,
                     category,
                     task_id,)
@@ -79,7 +79,7 @@ def import_tasks(
                 s = skeleton_from_single_coordinate([x, y, z], comment='First Node', branchpoint=True)
                 for cur_a in s.getAnnotations():
                     cur_a.comment = tree_comment
-                task_filepath = '%s/%s_%s.nml' % (
+                task_filepath = '{0}/{1}_{2}.nml'.format(
                     AUTO_GENERATED_NML_DIR,
                     category,
                     task_id,)

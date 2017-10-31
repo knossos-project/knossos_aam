@@ -128,10 +128,10 @@ def current_file_api_view(request):
         response = HttpResponse(task_file, content_type='application/nml')
         response['Content-Length'] = os.path.getsize(path_to_file)
         response['Content-Disposition'] = \
-            'attachment; filename=%s; taskname=%s / %s;' % (
+            'attachment; filename={0}; taskname={1} / {2};'.format(
                 encoding.smart_str(os.path.basename(filename)),
                 work.task.category.name,
-                work.task.name,)
+                work.task.name)
     else:
         latest_submission = work.last_submission
         filename = latest_submission.datafile.name
@@ -142,8 +142,7 @@ def current_file_api_view(request):
         response = HttpResponse(task_file, content_type='application/nml')
         response['Content-Length'] = os.path.getsize(path_to_file)
         response['Content-Disposition'] = \
-            'attachment; filename=%s;' % (encoding.smart_str(
-                os.path.basename(filename)),)
+            'attachment; filename={0};'.format(encoding.smart_str(os.path.basename(filename)))
 
     return response
 
@@ -176,12 +175,12 @@ def new_task_api_view(request):
     response = HttpResponse(task_file, content_type='application/nml')
     response['Content-Length'] = os.path.getsize(path_to_file)
     response['Content-Disposition'] = (
-        'attachment; filename=%s; taskname=%s / %s; description=%s; '
-        'comment=%s;' % (encoding.smart_str(os.path.basename(filename)),
+        'attachment; filename={0}; taskname={1} / {2}; description={3}; '
+        'comment={4};'.format(encoding.smart_str(os.path.basename(filename)),
                          task.category.name,
                          task.name,
                          b64encode(task.category.description.encode('utf-8')),
-                         b64encode(task.comment.encode('utf-8')),))
+                         b64encode(task.comment.encode('utf-8'))))
 
     return response
 

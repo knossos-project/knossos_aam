@@ -338,14 +338,14 @@ def download_task_file_view(request, filename):
 
     response = HttpResponse(task_file, content_type='application/nml')
     response['Content-Length'] = os.path.getsize(path_to_file)
-    response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(encoding.smart_str(filename))
 
     return response
 
     # using apache modxsendfile seems to be the "better way" because the file doesn't need
     # to be read by django into memory first. But this requires apache setup
     # response = HttpResponse(mimetype='application/force-download')
-    # response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
+    # response['Content-Disposition'] = 'attachment; filename={0}'.format(encoding.smart_str(filename))
     # response['X-Sendfile'] = encoding.smart_str(path_to_file)
     # return response
 

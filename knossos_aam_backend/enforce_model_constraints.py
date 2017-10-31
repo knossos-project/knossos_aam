@@ -23,8 +23,7 @@ def task_name_without_dashes(sender, instance, **kwargs):
 
 
 def task_category_name_combination(sender, instance, **kwargs):
-    instance.category_name_combination = '%s_%s' % (instance.category.name,
-                                                    instance.name,)
+    instance.category_name_combination = '{0}_{1}'.format(instance.category.name, instance.name)
 
 
 def task_ensure_valid_path(sender, instance, **kwargs):
@@ -66,9 +65,7 @@ def task_validate_checks(sender, instance, created, **kwargs):
         user_checks_list = instance.checks.replace(',', ' ').split()
         for cur_check in user_checks_list:
             if cur_check not in available_checks_list:
-                raise Exception(
-                    'Check %s is not available. Please try again.' % (
-                        cur_check,))
+                raise Exception('Check {0} is not available. Please try again.'.format(cur_check))
 
 
 def task_update_post_work_creation(sender, instance, created, **kwargs):
