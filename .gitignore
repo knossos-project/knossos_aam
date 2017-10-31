@@ -2,4 +2,7 @@
 *.pyc
 *.DS_Store
 *.egg-info
+.idea
+defaultdb.txt
 knossos_aam_backend/migrations
+knossos_aam/secret_key.py
