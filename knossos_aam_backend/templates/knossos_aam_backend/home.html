@@ -29,8 +29,7 @@
         <tr>
             <td>{{w.task.category.name}}</td>
             <td><a href="{% url 'knossos_aam_backend:workdetails' w.id %}">{{w.task.name}}</a></td>
-            <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{%
-                endif %}
+            <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{% endif %}
             </td>
             <td>{% if w.task.task_file == 'False' %}No task file.{% else %}<a href="{{w.task.task_file.url}}">Download
                 task file</a>{% endif %}
@@ -104,8 +103,7 @@
         <tr>
             <td>{{w.task.category.name}}</td>
             <td><a href="{% url 'knossos_aam_backend:workdetails' w.id %}">{{ w.task.name }}</a></td>
-            <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{%
-                endif %}
+            <td>{% if w.task.task_file == 'False' %}({{w.task.x}}, {{w.task.y}}, {{w.task.z}}){% else %}No coordinate.{% endif %}
             </td>
             <td>{% if w.task.task_file == 'False' %}No task file.{% else %}<a href="{{w.task.task_file.url}}">Download
                 task file</a>{% endif %}
