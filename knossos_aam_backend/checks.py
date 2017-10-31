@@ -33,6 +33,7 @@ Parameters:
 
 __author__ = 'Fabian Svara'
 
+import knossos_utils.skeleton_utils as skel_utils
 from general_utilities.mailer import Mailer
 
 
@@ -98,8 +99,7 @@ def check_simple(**kwargs):
 
     skeleton = kwargs['skeleton']
 
-    from knossos_utils.skeleton_utils import is_simple_skeleton
-    if not is_simple_skeleton(skeleton):
+    if not skel_utils.is_simple_skeleton(skeleton):
         return ("This skeleton file contains more than one tree. "
                 "Please correct the problem and resubmit.")
 
@@ -144,17 +144,13 @@ def check_connected_component(**kwargs):
 
     skeleton = kwargs['skeleton']
 
-    from knossos_utils.seleton_utils import is_singly_connected
-    from knossos_utils.seleton_utils import get_the_nonempty_annotation
-    from knossos_utils.seleton_utils import NonSimpleNML
-
     try:
-        anno = get_the_nonempty_annotation(skeleton)
-    except NonSimpleNML:
+        anno = skel_utils.get_the_nonempty_annotation(skeleton)
+    except skel_utils.NonSimpleNML:
         return ('This skeleton file contains more than one non-empty trees. '
                 'Please correct that problem and resubmit.')
 
-    if not is_singly_connected(anno):
+    if not skel_utils.is_singly_connected(anno):
         return ("This skeleton file contains a tree that contains unconnected "
                 "parts. Please make sure there are no gaps in the tree and resubmit.")
 
@@ -177,7 +173,6 @@ def email_on_submission(**kwargs):
 
     submit_file = kwargs['submit_file']
 
-    skeletonFileAsString = submit_file.read()
     ma = Mailer('mail_host',
                 use_auth=True,
                 use_smtps=True,

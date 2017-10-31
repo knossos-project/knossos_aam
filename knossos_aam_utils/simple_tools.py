@@ -39,7 +39,7 @@ def stats_for_task_set(t):
     for cur_t in t:
         avg_time = get_average_worktime(cur_t.work_set.all())
         fname = cur_t.task_file
-        size = cur_t.task_file._get_size() / 1000.
+        size = cur_t.task_file.size / 1000.
 
         stats.append((fname, avg_time, size))
 

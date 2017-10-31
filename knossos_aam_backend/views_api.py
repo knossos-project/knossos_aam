@@ -195,12 +195,10 @@ def submit_api_view(request):
     try:
         emp = Employee.objects.get(user=request.user)
     except Employee.DoesNotExist:
-        return HttpResponse(
-            "Employee " + request.user.username + " could not be found",
-            status=500)
+        return HttpResponse("Employee " + request.user.username + " could not be found", status=500)
 
-    submitFile = request.FILES.get("submit_work_file", False)
-    if not submitFile:
+    submit_file = request.FILES.get("submit_work_file", False)
+    if not submit_file:
         return HttpResponse("No file uploaded.", status=400)
 
     comment = request.POST.get('submit_comment', '')
@@ -218,8 +216,8 @@ def submit_api_view(request):
     task = active_work[0]
 
     try:
-        submit(emp, submitFile, comment, final, task.pk)
-    except (ParseError):
+        submit(emp, submit_file, comment, final, task.pk)
+    except ParseError:
         return HttpResponse(
             'Error parsing file. The file may be corrupt. Please contact '
             'the admin team for assistance.',
@@ -227,8 +225,7 @@ def submit_api_view(request):
     except InvalidSubmission, e:
         return HttpResponse("Invalid submission: " + str(e), status=400)
     except Work.DoesNotExist:
-        return HttpResponse("Could not find corresponding Work item.",
-                            status=400)
+        return HttpResponse("Could not find corresponding Work item.", status=400)
 
     return HttpResponse("Submitted task successfully.", status=201)
 
@@ -251,8 +248,8 @@ def submit_test_api_view(request):
             "Employee " + request.user.username + " could not be found",
             status=500)
 
-    submitFile = request.FILES.get("submit_test_file", False)
-    if not submitFile:
+    submit_file = request.FILES.get("submit_test_file", False)
+    if not submit_file:
         return HttpResponse("No file uploaded.", status=400)
 
     return HttpResponse("Submitted task successfully.", status=201)

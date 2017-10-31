@@ -15,7 +15,7 @@ from django.utils import encoding
 from django.utils import timezone
 
 import aam_interaction as aami
-from models import Employee, Work, Submission, Project
+import models
 from view_helpers import admin_check
 
 __author__ = 'Fabian Svara'
@@ -37,7 +37,7 @@ def home_view(request):
     request: HttpRequest
     """
 
-    employee = Employee.objects.get(user=request.user)
+    employee = models.Employee.objects.get(user=request.user)
 
     active_work = aami.get_active_work(employee)
     completed_work = aami.get_completed_work(employee)
@@ -56,7 +56,7 @@ def home_view(request):
 
 @login_required
 def workdetails_view(request, work_id):
-    w = get_object_or_404(Work, pk=work_id)
+    w = get_object_or_404(models.Work, pk=work_id)
     submissions = w.submission_set.order_by('date')
     worktime_overview = aami.get_monthly_worktime_for_work(w)
 
@@ -102,14 +102,12 @@ def cancel_task_view(request):
 
 @login_required
 def changetask_view(request):
-    employee = Employee.objects.get(user=request.user)
-
     if 'reopen_work_id' in request.POST:
-        aami.unfinalize_work(employee, request.POST['reopen_work_id'])
+        aami.unfinalize_work(request.POST['reopen_work_id'])
 
     elif 'delete_sub_id' in request.POST:
-        sub = Submission.objects.get(pk=request.POST['delete_sub_id'])
-        work = Work.objects.get(pk=sub.work_id)
+        sub = models.Submission.objects.get(pk=request.POST['delete_sub_id'])
+        work = models.Work.objects.get(pk=sub.work_id)
         aami.delete_submission(sub)
 
         return HttpResponseRedirect(
@@ -120,8 +118,8 @@ def changetask_view(request):
 
 @login_required
 def usertime_view(request):
-    e = get_object_or_404(Employee, user=request.user)
-    s = Submission.objects.filter(employee=e)
+    e = get_object_or_404(models.Employee, user=request.user)
+    s = models.Submission.objects.filter(employee=e)
     worktime_overview = aami.get_monthly_worktime_for_submissions(s)
 
     context = {'employee': e,
@@ -137,11 +135,11 @@ def monthoverview_view(request, year, month):
     timeoverview_totals = {}
     timeoverview_details = {}
 
-    for e in Employee.objects.all():
+    for e in models.Employee.objects.all():
         timeoverview_totals[e] = {}
         timeoverview_details[e] = {}
 
-        subs = Submission.objects.filter(
+        subs = models.Submission.objects.filter(
             employee=e,
             date__year=year,
             date__month=month, )
@@ -165,7 +163,7 @@ def monthoverview_sort_by_project_view(request, year, month):
     timeoverview_project_totals = {}
     timeoverview_project_details = {}
 
-    for p in Project.objects.all():
+    for p in models.Project.objects.all():
         timeoverview_employee_totals = {}
         timeoverview_employee_details = {}
 
@@ -173,7 +171,7 @@ def monthoverview_sort_by_project_view(request, year, month):
             timeoverview_employee_totals[e] = {}
             timeoverview_employee_details[e] = {}
 
-            subs = Submission.objects.filter(
+            subs = models.Submission.objects.filter(
                 employee=e,
                 date__year=year,
                 date__month=month, )
@@ -246,7 +244,7 @@ def timeoverview_view(request):
     timeoverview_totals = {}
     timeoverview_details = {}
 
-    for e in Employee.objects.all():
+    for e in models.Employee.objects.all():
         timeoverview_totals[e] = {}
         timeoverview_details[e] = {}
 
@@ -267,7 +265,7 @@ def timeoverview_sort_by_project_view(request):
     timeoverview_project_totals = {}
     timeoverview_project_details = {}
 
-    for p in Project.objects.all():
+    for p in models.Project.objects.all():
         timeoverview_employee_totals = {}
         timeoverview_employee_details = {}
 
@@ -294,8 +292,8 @@ def timeoverview_sort_by_project_view(request):
 
 def move_employees_helper(request):
     put_data = json.loads(request.body.decode("utf-8"))
-    project = get_object_or_404(Project, name=put_data["project"])
-    employees = Employee.objects.filter(user__username__in=put_data["employees"])
+    project = get_object_or_404(models.Project, name=put_data["project"])
+    employees = models.Employee.objects.filter(user__username__in=put_data["employees"])
     aami.move_employees_to_project(employees, project)
 
 
@@ -307,7 +305,7 @@ def employee_work_overview(request):
 
     emp_set = aami.get_employees_current_work()
     context = {"employees": emp_set,
-               "projects": Project.objects.all()}
+               "projects": models.Project.objects.all()}
     return render(request, "knossos_aam_backend/employees_current_work_view.html", context)
 
 
@@ -318,7 +316,7 @@ def employee_project_overview(request):
         move_employees_helper(request)
 
     projects = {}
-    for proj in Project.objects.all():
+    for proj in models.Project.objects.all():
         projects[proj] = aami.get_employee_infos_in_project(proj)
     context = {"projects": projects}
     return render(request, "knossos_aam_backend/employee_project_overview.html", context)
@@ -333,16 +331,14 @@ def error_view(request, error_string):
 def download_task_file_view(request, filename):
     # potential security flaw here: by providing a malicious filename to
     # download arbitrary files..
-    path_to_file = settings.MEDIA_ROOT + '/task-files/{0}'.format(
-        filename).rstrip('\n')
+    path_to_file = settings.MEDIA_ROOT + '/task-files/{0}'.format(filename).rstrip('\n')
 
     with open(path_to_file, 'r') as f:
         task_file = f.read()
 
     response = HttpResponse(task_file, content_type='application/nml')
     response['Content-Length'] = os.path.getsize(path_to_file)
-    response['Content-Disposition'] = 'attachment; filename=%s' \
-                                      % encoding.smart_str(filename)
+    response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
 
     return response
 

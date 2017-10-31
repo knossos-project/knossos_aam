@@ -37,8 +37,6 @@ def import_tasks(
     that can be downloaded.
     """
 
-    matched_names = {}
-
     with open(csv_input, 'r') as f:
         for cur_line in f.readlines():
             cur_task = [x for x in cur_line.split('\t') if not x.isspace()]
@@ -54,9 +52,6 @@ def import_tasks(
                 task_id = cur_task[1]
                 task_filepath = cur_task[2]
                 target_coverage = int(cur_task[3])
-                x = 0
-                y = 0
-                z = 0
             elif len(cur_task) == 6:
                 category = cur_task[0]
                 task_id = cur_task[1]
@@ -81,8 +76,7 @@ def import_tasks(
                 target_coverage = int(cur_task[5])
                 tree_comment = cur_task[6].strip()
 
-                s = skeleton_from_single_coordinate(
-                    [x, y, z], comment='First Node', branchpoint=True)
+                s = skeleton_from_single_coordinate([x, y, z], comment='First Node', branchpoint=True)
                 for cur_a in s.getAnnotations():
                     cur_a.comment = tree_comment
                 task_filepath = '%s/%s_%s.nml' % (

@@ -18,7 +18,7 @@ def freeze_delay_reached(cur_work):
 
     now = timezone.now()
 
-    if cur_work.latestsubmit == None:
+    if cur_work.latestsubmit is None:
         return False
 
     if not cur_work.is_final:

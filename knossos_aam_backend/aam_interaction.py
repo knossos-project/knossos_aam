@@ -14,10 +14,9 @@ from django.utils import timezone
 from general_utilities.versions import compare_version
 from knossos_utils.skeleton import Skeleton
 
+import checks
 import models
-from view_helpers import InvalidSubmission
-from view_helpers import TooManyActiveTasks
-from view_helpers import UserRace
+import view_helpers
 
 
 class NonEmptyWork(Exception):
@@ -144,7 +143,7 @@ def reset_task(task, username):
     w.save()
 
 
-def unfinalize_work(employee, work_id):
+def unfinalize_work(work_id):
     w = models.Work.objects.get(pk=work_id)
 
     w.is_final = False
@@ -166,7 +165,7 @@ def choose_task(employee, task_id):
     active_work = models.Work.objects.filter(
         employee=employee, is_final=False)
     if not len(active_work) == 0:
-        raise TooManyActiveTasks()
+        raise view_helpers.TooManyActiveTasks()
 
     task = models.Task.objects.get(pk=task_id)
     if task.target_coverage > task.current_coverage:
@@ -176,7 +175,7 @@ def choose_task(employee, task_id):
             employee=employee,
             is_final=False, )
     else:
-        raise UserRace()
+        raise view_helpers.UserRace()
 
     return
 
@@ -245,7 +244,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
 
     """
     if len(submit_file.name) > 200:
-        raise InvalidSubmission(
+        raise view_helpers.InvalidSubmission(
             'The maximal file name length for submissions is '
             '200 character.')
 
@@ -258,12 +257,12 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
         fp = StringIO(submit_file.read())
         zipper = zipfile.ZipFile(fp, 'r')
 
-        if not 'annotation.xml' in zipper.namelist():
+        if 'annotation.xml' not in zipper.namelist():
             raise Exception('k.zip broken.')
 
-        skeletonFileAsString = zipper.read('annotation.xml')
+        skeleton_file_as_string = zipper.read('annotation.xml')
     else:
-        skeletonFileAsString = submit_file.read()
+        skeleton_file_as_string = submit_file.read()
 
     checks_to_run = re.split('\W', work.task.checks)
     checks_to_run = [x for x in checks_to_run if x]
@@ -275,7 +274,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
             check_fns[cur_check] = cur_check_fn
 
         skeleton = Skeleton()
-        skeleton.fromNmlString(skeletonFileAsString,
+        skeleton.fromNmlString(skeleton_file_as_string,
                                use_file_scaling=True)
 
         # Keyword arguments for check functions
@@ -288,7 +287,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
                   'submit_comment': submit_comment,
                   'submit_work_id': submit_work_id,
                   'submit_is_final': submit_is_final,
-                  'submit_file_as_string': skeletonFileAsString, }
+                  'submit_file_as_string': skeleton_file_as_string, }
 
         # Check whether the knossos version is high enough
 
@@ -296,7 +295,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
 
         # Has work time tracking
         if compare_version(version['saved'], (4, 1, 2)) == '<':
-            raise InvalidSubmission(
+            raise view_helpers.InvalidSubmission(
                 "This tracing was saved in a version "
                 "of Knossos that is too old and incompatible with "
                 "knossos_aam. Please upgrade to version 4.1.2, "
@@ -307,15 +306,15 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
             # All fine, newest version.
             pass
 
-        if not 'automatic_worktime' in checks_to_run:
+        if 'automatic_worktime' not in checks_to_run:
             incremental_worktime = None
             auto_worktime = False
-            output = automatic_worktime(**kwargs)
+            output = checks.automatic_worktime(**kwargs)
         else:
             auto_worktime = True
-            output = automatic_worktime(**kwargs)
+            output = checks.automatic_worktime(**kwargs)
             if type(output) == str:
-                raise InvalidSubmission(output)
+                raise view_helpers.InvalidSubmission(output)
             else:
                 incremental_worktime = output
             del check_fns['automatic_worktime']
@@ -325,7 +324,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
         for cur_check in check_fns:
             output = eval(cur_check)(**kwargs)
             if type(output) == str:
-                raise InvalidSubmission(output)
+                raise view_helpers.InvalidSubmission(output)
 
         if 'automatic_worktime' in checks_to_run and incremental_worktime:
             work.worktime = work.worktime + incremental_worktime
@@ -340,7 +339,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
     if submit_comment:
         subject = 'Comment on Submission of Task %s Task from %s' % (
             work.task.name, employee.user.username,)
-        attachments = [(skeletonFileAsString, submit_file.name)]
+        attachments = [(skeleton_file_as_string, submit_file.name)]
         # todo get mailing to work again
         # mail_notify('to@example.com', subject, submit_comment,
         #            attachments=attachments, reply_to=work.employee.user.email)
@@ -391,16 +390,16 @@ def get_monthly_worktime_for_submissions(submission_set):
         else:
             cur_worktime = curs.worktime
 
-        if not year in by_month_per_task:
+        if year not in by_month_per_task:
             by_month_per_task[year] = {}
             by_month_totals[year] = {}
-        if not month in by_month_per_task[year]:
+        if month not in by_month_per_task[year]:
             by_month_per_task[year][month] = {}
             # Second item in tuple indicates whether the worktime
             # is incomplete, i.e. work was performed on tasks
             # for which worktime is not automatically computed
             by_month_totals[year][month] = [0, False]
-        if not task in by_month_per_task[year][month]:
+        if task not in by_month_per_task[year][month]:
             by_month_per_task[year][month][task] = [0, False]
 
         if incomplete_time:
@@ -422,10 +421,9 @@ def get_monthly_worktime_for_work(w):
 
 def get_employee_info(emp):
     work = get_active_work(emp)
-    info = {}
-    info["name"] = " ".join([emp.user.first_name, emp.user.last_name])
-    info["username"] = " ".join([emp.user.username])
-    info["project"] = emp.project.name
+    info = {"name": " ".join([emp.user.first_name, emp.user.last_name]),
+            "username": " ".join([emp.user.username]),
+            "project": emp.project.name}
     if len(work) > 0:
         work = work[0]
         info["task_name"] = work.task.name
@@ -437,7 +435,6 @@ def get_employee_info(emp):
 def get_employees_current_work():
     emp_set = {}
     for emp in models.Employee.objects.all():
-        work = get_active_work(emp)
         emp_set[emp] = get_employee_info(emp)
     return emp_set
 

@@ -86,7 +86,7 @@ def work_update_post_submission(sender, instance, created, **kwargs):
         instance.work.save()
 
 
-def taskcategory_name_without_dashes(sender, instance, created, **kwargs):
+def task_category_name_without_dashes(sender, instance, created, **kwargs):
     if created:
         instance.name = instance.name.replace('-', '_')
         instance.save()

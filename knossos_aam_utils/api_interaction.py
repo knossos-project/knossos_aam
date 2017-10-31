@@ -72,7 +72,8 @@ class AAMApi(object):
         if r.status_code != 201:
             raise AAMError('Submission not successful. %s' % (r.content,))
 
-    def _get_file_from_response(self, r):
+    @staticmethod
+    def _get_file_from_response(r):
         """
         Extract filename and file contents from AAM response
         """
