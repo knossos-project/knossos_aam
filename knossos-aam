@@ -13,6 +13,7 @@ if __name__ == "__main__":
         import json
         from psycopg2 import connect
         from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
         # host and port
         host = raw_input("Enter server hostname (default localhost):")
         if host == "": host = "localhost"
@@ -49,12 +50,13 @@ if __name__ == "__main__":
         with open("defaultdb.txt", "w") as dbfile:
             json.dump(defaultdb, dbfile)
 
-        django.setup() # setup after defaultdb has been specified
+        django.setup()  # setup after defaultdb has been specified
         management.call_command("makemigrations", verbosity=1)
         management.call_command("migrate", verbosity=1)
         management.call_command("makemigrations", "knossos_aam_backend", verbosity=1)
         management.call_command("migrate", verbosity=1)
         from django.contrib.auth.models import User
+
         User.objects.create_superuser(username, email, p1)
     else:
         management.execute_from_command_line(sys.argv)

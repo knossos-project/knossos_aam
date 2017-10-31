@@ -1,6 +1,9 @@
-from django.utils import timezone
-from knossos_aam_backend.models import Work
 import datetime
+
+from django.utils import timezone
+
+from knossos_aam_backend.models import Work
+
 
 def freeze_delay_reached(cur_work):
     """
@@ -26,7 +29,7 @@ def freeze_delay_reached(cur_work):
 
     freeze_delay = datetime.timedelta(cur_work.task.freeze_delay)
     cur_work_freeze_deadline = (
-            cur_work.latestsubmit + freeze_delay)
+        cur_work.latestsubmit + freeze_delay)
 
     if cur_work_freeze_deadline < now:
         return True
@@ -77,22 +80,22 @@ def get_stale_work(max_age, in_cat=None):
 
     if in_cat:
         no_submission_stale_works = Work.objects.filter(
-                started__lt=age_cutoff,
-                latestsubmit=None,
-                task__category__name__in=in_cat,
-                is_final=False, )
+            started__lt=age_cutoff,
+            latestsubmit=None,
+            task__category__name__in=in_cat,
+            is_final=False, )
         submitted_stale_works = Work.objects.filter(
-                latestsubmit__lt=age_cutoff,
-                task__category__name__in=in_cat,
-                is_final=False, )
+            latestsubmit__lt=age_cutoff,
+            task__category__name__in=in_cat,
+            is_final=False, )
     else:
         no_submission_stale_works = Work.objects.filter(
-                started__lt=age_cutoff,
-                latestsubmit=None,
-                is_final=False, )
+            started__lt=age_cutoff,
+            latestsubmit=None,
+            is_final=False, )
         submitted_stale_works = Work.objects.filter(
-                latestsubmit__lt=age_cutoff,
-                is_final=False, )
+            latestsubmit__lt=age_cutoff,
+            is_final=False, )
 
     stale_works = list(no_submission_stale_works) + list(submitted_stale_works)
 

@@ -5,20 +5,18 @@ with actual business logic being performed in aam_interaction.py.
 import json
 import os
 
-from django.http import HttpResponse, HttpResponseRedirect
+import django.contrib.auth as auth
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth import logout
-from django.utils import timezone
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.utils import encoding
+from django.utils import timezone
 
 import aam_interaction as aami
 from models import Employee, Work, Submission, Project
 from view_helpers import admin_check
-
-
 
 __author__ = 'Fabian Svara'
 
@@ -115,7 +113,7 @@ def changetask_view(request):
         aami.delete_submission(sub)
 
         return HttpResponseRedirect(
-            reverse('knossos_aam_backend:workdetails', args=(work.id, )))
+            reverse('knossos_aam_backend:workdetails', args=(work.id,)))
 
     return HttpResponseRedirect(reverse('knossos_aam_backend:home'))
 
@@ -179,7 +177,7 @@ def monthoverview_sort_by_project_view(request, year, month):
                 employee=e,
                 date__year=year,
                 date__month=month, )
- 
+
             worktime_overview = aami.get_monthly_worktime_for_submissions(subs)
 
             timeoverview_employee_totals[e] = \
@@ -224,22 +222,22 @@ def sort_by_project_view(request):
         return HttpResponseRedirect(
             reverse('knossos_aam_backend:monthoverview_sort_by_project',
                     args=(request.POST['sort_by_project_year'],
-                          request.POST['sort_by_project_month'], )))
+                          request.POST['sort_by_project_month'],)))
     elif 'sort_by_name_month' in request.POST:
         return HttpResponseRedirect(
             reverse('knossos_aam_backend:monthoverview',
                     args=(request.POST['sort_by_name_year'],
-                          request.POST['sort_by_name_month'], )))
+                          request.POST['sort_by_name_month'],)))
     elif 'sort_by_project_stats_month' in request.POST:
         return HttpResponseRedirect(
             reverse('knossos_aam_backend:statistics_sort_by_project',
                     args=(request.POST['sort_by_project_stats_year'],
-                          request.POST['sort_by_project_stats_month'], )))
+                          request.POST['sort_by_project_stats_month'],)))
     elif 'sort_by_name_stats_month' in request.POST:
         return HttpResponseRedirect(
             reverse('knossos_aam_backend:statistics',
                     args=(request.POST['sort_by_name_stats_year'],
-                          request.POST['sort_by_name_stats_month'], )))
+                          request.POST['sort_by_name_stats_month'],)))
 
 
 @login_required
@@ -276,7 +274,7 @@ def timeoverview_sort_by_project_view(request):
         for e in p.employee_set.all():
             timeoverview_employee_totals[e] = {}
             timeoverview_employee_details[e] = {}
- 
+
             worktime_overview = aami.get_monthly_worktime_for_submissions(
                 e.submission_set)
 
@@ -293,11 +291,13 @@ def timeoverview_sort_by_project_view(request):
 
     return render(request, 'knossos_aam_backend/timeoverview_projects.html', context)
 
+
 def move_employees_helper(request):
     put_data = json.loads(request.body.decode("utf-8"))
     project = get_object_or_404(Project, name=put_data["project"])
     employees = Employee.objects.filter(user__username__in=put_data["employees"])
     aami.move_employees_to_project(employees, project)
+
 
 @login_required
 @user_passes_test(admin_check)
@@ -306,9 +306,10 @@ def employee_work_overview(request):
         move_employees_helper(request)
 
     emp_set = aami.get_employees_current_work()
-    context = { "employees": emp_set,
-                "projects": Project.objects.all() }
+    context = {"employees": emp_set,
+               "projects": Project.objects.all()}
     return render(request, "knossos_aam_backend/employees_current_work_view.html", context)
+
 
 @login_required
 @user_passes_test(admin_check)
@@ -319,8 +320,9 @@ def employee_project_overview(request):
     projects = {}
     for proj in Project.objects.all():
         projects[proj] = aami.get_employee_infos_in_project(proj)
-    context = { "projects": projects }
+    context = {"projects": projects}
     return render(request, "knossos_aam_backend/employee_project_overview.html", context)
+
 
 @login_required
 def error_view(request, error_string):
@@ -346,13 +348,13 @@ def download_task_file_view(request, filename):
 
     # using apache modxsendfile seems to be the "better way" because the file doesn't need
     # to be read by django into memory first. But this requires apache setup
-    #response = HttpResponse(mimetype='application/force-download')
-    #response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
-    #response['X-Sendfile'] = encoding.smart_str(path_to_file)
-    #return response
+    # response = HttpResponse(mimetype='application/force-download')
+    # response['Content-Disposition'] = 'attachment; filename=%s' % encoding.smart_str(filename)
+    # response['X-Sendfile'] = encoding.smart_str(path_to_file)
+    # return response
 
 
 def logout_view(request):
-    logout(request)
+    auth.logout(request)
 
     return HttpResponseRedirect(reverse('knossos_aam_backend:login'))

@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 <html class="_full-height">
 <head>
-	<title></title>
+    <title></title>
 
-	<link rel="stylesheet" href="{{STATIC_URL}}assets/css/main.css" />
-	<link rel="stylesheet" href="{{STATIC_URL}}assets/css/style.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}assets/css/main.css"/>
+    <link rel="stylesheet" href="{{STATIC_URL}}assets/css/style.css"/>
 </head>
 
 <body class="LoginSite _full-height">
-	<section class="container -small _center">
-		<p class="_text-center"><img src="{{STATIC_URL}}back.jpg" height="200"></p>
+<section class="container -small _center">
+    <p class="_text-center"><img src="{{STATIC_URL}}back.jpg" height="200"></p>
 
-		{% if form.errors %}
-		<p class="alert _mb-10">
-			<strong>Username or password wrong.</strong>
-		</p>
-		{% endif %}
-		{% if next %}
-		<form method="post" action="{% url 'knossos_aam_backend:login' %}?next={{next}}">
-		{% else %}
-		<form method="post" action="{% url 'knossos_aam_backend:login' %}">
-		{% endif %}
-			{% csrf_token %}
-			<div class="popover -box _center">
-				<h6>Login</h6>
+    {% if form.errors %}
+    <p class="alert _mb-10">
+        <strong>Username or password wrong.</strong>
+    </p>
+    {% endif %}
+    {% if next %}
+    <form method="post" action="{% url 'knossos_aam_backend:login' %}?next={{next}}">
+        {% else %}
+        <form method="post" action="{% url 'knossos_aam_backend:login' %}">
+            {% endif %}
+            {% csrf_token %}
+            <div class="popover -box _center">
+                <h6>Login</h6>
 
-				<h2>Welcome to knossos_aam!</h2>
-				<table class="-with-gutter -middle">
-					<tr>
-						<td>{{form.username.label_tag}}</td>
-						<td>{{form.username}}</td>
-					</tr>
+                <h2>Welcome to knossos_aam!</h2>
+                <table class="-with-gutter -middle">
+                    <tr>
+                        <td>{{form.username.label_tag}}</td>
+                        <td>{{form.username}}</td>
+                    </tr>
 
-					<tr>
-						<td>{{form.password.label_tag}}</td>
-						<td>{{form.password}}</td>
-					</tr>
-				</table>
-				<p class="_text-right"><input type="submit" value="Login" class="button"></p>
-			</div>
-		</form>
-	</section>
+                    <tr>
+                        <td>{{form.password.label_tag}}</td>
+                        <td>{{form.password}}</td>
+                    </tr>
+                </table>
+                <p class="_text-right"><input type="submit" value="Login" class="button"></p>
+            </div>
+        </form>
+</section>
 </body>
 </html>

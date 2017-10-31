@@ -5,41 +5,41 @@
 <h2>Totals</h2>
 {% for y, months in totals.items %}
 <table id="boxtable">
-<tr>
-<th><b>Year</b></th>
-<th><b>Month</b></th>
-<th><b>Total hours</b></th>
-</tr>
-{% for m, total in months.items %}
-<tr>
-<td>{{y}}</td>
-<td>{{m}}</td>
-<td>{% if total.1 %}<i>{% endif %}{{total.0}}{% if total.1 %}</i>{% endif %}</td>
-</tr>
-{% endfor %}
-{% endfor %}
+    <tr>
+        <th><b>Year</b></th>
+        <th><b>Month</b></th>
+        <th><b>Total hours</b></th>
+    </tr>
+    {% for m, total in months.items %}
+    <tr>
+        <td>{{y}}</td>
+        <td>{{m}}</td>
+        <td>{% if total.1 %}<i>{% endif %}{{total.0}}{% if total.1 %}</i>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
 </table>
 
 <h2>Details</h2>
 
 {% for y, months in per_task.items %}
 <table id="boxtable">
-<tr>
-<th>Year</th>
-<th>Month</th>
-<th>Task</th>
-<th>Total hours</th>
-</tr>
-{% for m, tasks in months.items %}
-{% for t, time in tasks.items %}
-<tr>
-<td>{{y}}</td>
-<td>{{m}}</td>
-<td>{{t.name}}</td>
-<td>{% if time.1 %}<i>{% endif %}{{time.0}}{% if time.1 %}</i>{% endif %}</td>
-</tr>
-{% endfor %}
-{% endfor %}
-{% endfor %}
+    <tr>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Task</th>
+        <th>Total hours</th>
+    </tr>
+    {% for m, tasks in months.items %}
+    {% for t, time in tasks.items %}
+    <tr>
+        <td>{{y}}</td>
+        <td>{{m}}</td>
+        <td>{{t.name}}</td>
+        <td>{% if time.1 %}<i>{% endif %}{{time.0}}{% if time.1 %}</i>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
 </table>
 {% endblock %}

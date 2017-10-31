@@ -3,38 +3,39 @@
 {% block main %}
 <h1>User statistics for month {{year}} - {{month}}</h1>
 
-<h3>Sort by name: </h3> 
-    <form action="{% url 'knossos_aam_backend:sort_by_project' %}	" method="post">
-        {% csrf_token %}
-        <button type="submit" name="sort_by_name_stats_month" value="{{ month }}">Sort by name</button></td>
-        <input type="hidden" name="sort_by_name_stats_year" value="{{ year }}">
-    </form>
+<h3>Sort by name: </h3>
+<form action="{% url 'knossos_aam_backend:sort_by_project' %}	" method="post">
+    {% csrf_token %}
+    <button type="submit" name="sort_by_name_stats_month" value="{{ month }}">Sort by name</button>
+    </td>
+    <input type="hidden" name="sort_by_name_stats_year" value="{{ year }}">
+</form>
 
 {% for p, project in projects.items %}
 
 <h2>{{ project.name }}</h2>
 
 <table id="boxtable">
-<tr>
-<th>Employee</th>
-<th>Monthly worktime</th>
-<th>Number of Submissions</th>
-<th>Tracing speed</th>
-</tr>
-{% for user_id, user_dict in project.users.items %}
-<tr>
-<td>{{ user_dict.first_name }} {{ user_dict.last_name }}</td>
-<td>{{ user_dict.total_worktime }}</td>
-<td>{{ user_dict.no_of_sub }}</td>
-<td>{{ user_dict.tracing_speed }}</td>
-</tr>
-{% endfor %}
-<tr>
-<td><i>Project worktime:<i></td>
-<td>{{ project.worktime }}</td>
-<td></td>
-<td></td>
-</tr>
+    <tr>
+        <th>Employee</th>
+        <th>Monthly worktime</th>
+        <th>Number of Submissions</th>
+        <th>Tracing speed</th>
+    </tr>
+    {% for user_id, user_dict in project.users.items %}
+    <tr>
+        <td>{{ user_dict.first_name }} {{ user_dict.last_name }}</td>
+        <td>{{ user_dict.total_worktime }}</td>
+        <td>{{ user_dict.no_of_sub }}</td>
+        <td>{{ user_dict.tracing_speed }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td><i>Project worktime:<i></td>
+        <td>{{ project.worktime }}</td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>
 
 {% endfor %}

@@ -1,11 +1,14 @@
 import os
+
 from setuptools import find_packages, setup
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 setup(
     name='knossos_aam',
@@ -19,7 +22,7 @@ setup(
     url="https://github.com/knossos-project/knossos_aam",
     author='Fabian Svara',
     author_email='knossos-team@mpimf-heidelberg.mpg.de',
-    install_requires =[
+    install_requires=[
         "django",
         "django_extensions",
         "GDAL",

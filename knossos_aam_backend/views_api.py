@@ -2,38 +2,28 @@
 Views to be accessed through Knossi instead of the web frontend.
 """
 
-from django.conf import settings
+import json
+import os
+import xml.etree.ElementTree as et
+from base64 import b64encode
 
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import logout
+from django.http import HttpResponse
 from django.utils import encoding
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
-import xml.etree.ElementTree as et
-from xml.parsers.expat import ExpatError
-import os
 
-from models import Employee
-from models import Work
-
-from base64 import b64encode
-
+from aam_interaction import choose_task
 from aam_interaction import get_active_work
 from aam_interaction import get_available_tasks
-from aam_interaction import choose_task
 from aam_interaction import submit
-
-from view_helpers import ParseError
+from models import Employee
+from models import Work
 from view_helpers import InvalidSubmission
+from view_helpers import ParseError
 from view_helpers import login_required_403
-from view_helpers import admin_check
-import re
-import json
-
 
 __author__ = 'Fabian Svara'
 
@@ -141,7 +131,7 @@ def current_file_api_view(request):
             'attachment; filename=%s; taskname=%s / %s;' % (
                 encoding.smart_str(os.path.basename(filename)),
                 work.task.category.name,
-                work.task.name, )
+                work.task.name,)
     else:
         latest_submission = work.last_submission
         filename = latest_submission.datafile.name
@@ -153,7 +143,7 @@ def current_file_api_view(request):
         response['Content-Length'] = os.path.getsize(path_to_file)
         response['Content-Disposition'] = \
             'attachment; filename=%s;' % (encoding.smart_str(
-                os.path.basename(filename)), )
+                os.path.basename(filename)),)
 
     return response
 
@@ -191,7 +181,7 @@ def new_task_api_view(request):
                          task.category.name,
                          task.name,
                          b64encode(task.category.description.encode('utf-8')),
-                         b64encode(task.comment.encode('utf-8')), ))
+                         b64encode(task.comment.encode('utf-8')),))
 
     return response
 
@@ -238,7 +228,7 @@ def submit_api_view(request):
         return HttpResponse("Invalid submission: " + str(e), status=400)
     except Work.DoesNotExist:
         return HttpResponse("Could not find corresponding Work item.",
-            status=400)
+                            status=400)
 
     return HttpResponse("Submitted task successfully.", status=201)
 

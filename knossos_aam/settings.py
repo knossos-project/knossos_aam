@@ -1,7 +1,7 @@
 # Django settings for knossos_aam project.
 
 DEBUG = True
-APPEND_SLASH=False
+APPEND_SLASH = False
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -9,10 +9,10 @@ ADMINS = (
 MANAGERS = ADMINS
 
 import json
+
 DATABASES = {}
 with open("defaultdb.txt", "r") as defaultdb:
     DATABASES["default"] = json.load(defaultdb)
-
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
@@ -74,7 +74,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -83,11 +83,15 @@ try:
 except ImportError:
     import os
     from django.utils.crypto import get_random_string
-    def generate_secret_key(filename): # https://github.com/django/django/blob/9893fa12b735f3f47b35d4063d86dddf3145cb25/django/core/management/commands/startproject.py
+
+
+    def generate_secret_key(
+            filename):  # https://github.com/django/django/blob/9893fa12b735f3f47b35d4063d86dddf3145cb25/django/core/management/commands/startproject.py
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
         get_random_string(50, chars)
         with open(filename, "w") as key_file:
             key_file.write("SECRET_KEY = '" + get_random_string(50, chars) + "'")
+
 
     settings_dir = os.path.abspath(os.path.dirname(__file__))
     generate_secret_key(os.path.join(settings_dir, 'secret_key.py'))
@@ -98,7 +102,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             '/path/to/templates',
-		    '/path/to/templates/admin',
+            '/path/to/templates/admin',
         ],
         'APP_DIRS': True,
         'OPTIONS': {

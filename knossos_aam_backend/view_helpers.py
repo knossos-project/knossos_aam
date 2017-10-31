@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from general_utilities.mailer import Mailer
-from models import Employee
 
+from models import Employee
 
 __author__ = 'Fabian Svara'
 
@@ -53,8 +53,8 @@ def login_required_403(fn):
 
     def decorator(request, *args, **kwargs):
         if not request.user.is_authenticated():
-             return HttpResponse(
-                 "You are not authenticated. Permission denied.", status=403)
+            return HttpResponse(
+                "You are not authenticated. Permission denied.", status=403)
         return fn(request, *args, **kwargs)
 
     return decorator

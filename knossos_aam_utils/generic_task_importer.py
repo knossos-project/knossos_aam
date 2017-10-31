@@ -14,13 +14,14 @@ git.import_tasks(path_to_csv_descriptor, False, False, False, True, 0., '')
 
 """
 
-from knossos_aam_backend.models import Employee, Work, Task, TaskCategory
-from django.contrib.auth.models import User
 from django.core.files import File
 from django.db import transaction
 from knossos_utils.skeleton_utils import skeleton_from_single_coordinate
 
-AUTO_GENERATED_NML_DIR='auto_generated_nml'
+from knossos_aam_backend.models import Task, TaskCategory
+
+AUTO_GENERATED_NML_DIR = 'auto_generated_nml'
+
 
 @transaction.atomic
 def import_tasks(
@@ -35,9 +36,9 @@ def import_tasks(
     Script to create new tasks in amm that are  kzip based task files
     that can be downloaded.
     """
-    
+
     matched_names = {}
-    
+
     with open(csv_input, 'r') as f:
         for cur_line in f.readlines():
             cur_task = [x for x in cur_line.split('\t') if not x.isspace()]
@@ -65,11 +66,11 @@ def import_tasks(
                 target_coverage = int(cur_task[5])
 
                 s = skeleton_from_single_coordinate(
-                        [x, y, z], comment='First Node', branchpoint=True)
+                    [x, y, z], comment='First Node', branchpoint=True)
                 task_filepath = '%s/%s_%s.nml' % (
                     AUTO_GENERATED_NML_DIR,
                     category,
-                    task_id, )
+                    task_id,)
                 s.toNml(task_filepath)
             elif len(cur_task) == 7:
                 category = cur_task[0]
@@ -81,25 +82,25 @@ def import_tasks(
                 tree_comment = cur_task[6].strip()
 
                 s = skeleton_from_single_coordinate(
-                        [x, y, z], comment='First Node', branchpoint=True)
+                    [x, y, z], comment='First Node', branchpoint=True)
                 for cur_a in s.getAnnotations():
                     cur_a.comment = tree_comment
                 task_filepath = '%s/%s_%s.nml' % (
                     AUTO_GENERATED_NML_DIR,
                     category,
-                    task_id, )
+                    task_id,)
                 s.toNml(task_filepath)
 
             else:
                 raise Exception('Unknown format.')
-                
+
             try:
-               with open(task_filepath):
-                   pass
+                with open(task_filepath):
+                    pass
             except IOError:
-               raise Exception(
-                       'Task path in csv file could not be matched to an '
-                       'actual task file: ' + task_filepath)
+                raise Exception(
+                    'Task path in csv file could not be matched to an '
+                    'actual task file: ' + task_filepath)
 
             cat = TaskCategory.objects.get(name=category)
             taskfileobj = file(task_filepath)
@@ -115,17 +116,19 @@ def import_tasks(
                 checks.append('automatic_worktime')
 
             checks = ' '.join(checks)
-            
+
             t = Task.objects.create(name=str(task_id),
-                    target_coverage=target_coverage,
-                    category=cat,
-                    checks=checks,
-                    comment=comment,
-                    freeze_delay=freeze_delay,
-                    task_file = File(taskfileobj))
-                    
+                                    target_coverage=target_coverage,
+                                    category=cat,
+                                    checks=checks,
+                                    comment=comment,
+                                    freeze_delay=freeze_delay,
+                                    task_file=File(taskfileobj))
+
             t.save()
             taskfileobj.close()
+
+
 # settings hints:
 
 # for focused annotation seeds:
@@ -137,9 +140,9 @@ def import_tasks(
 
 if __name__ == '__main__':
     import_tasks(
-            'xxx.csv',
-            freeze_delay=7.,
-            check_simple=False,
-            check_seed_contained=False,
-            check_connected_component=False,
-            automatic_worktime=True)
+        'xxx.csv',
+        freeze_delay=7.,
+        check_simple=False,
+        check_seed_contained=False,
+        check_connected_component=False,
+        automatic_worktime=True)

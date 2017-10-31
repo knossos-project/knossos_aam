@@ -33,17 +33,6 @@ Parameters:
 
 __author__ = 'Fabian Svara'
 
-
-from django.http import Http404
-
-import re
-from knossos_utils.skeleton import Skeleton
-from knossos_utils.skeleton_utils import get_the_nonempty_annotation
-from knossos_utils.skeleton_utils import split_by_connected_component
-from knossos_utils.skeleton_utils import get_nodes_with_comment
-from knossos_utils.skeleton_utils import iter_nodes_dfs
-from knossos_utils.skeleton_utils import get_annotations_with_comment
-from knossos_utils.skeleton_utils import get_nodes_with_token
 from general_utilities.mailer import Mailer
 
 
@@ -76,12 +65,12 @@ def automatic_worktime(**kwargs):
 
     # to unpack the keyword arguments
     #
-  
+
     skeleton = kwargs['skeleton']
     work = kwargs['work']
 
     worktime = ((skeleton.getSkeletonTime() - skeleton.getIdleTime())
-                                                   / 1000.0 / 3600.0)
+                / 1000.0 / 3600.0)
     if worktime < 0:
         worktime = 0.
     if work.worktime > worktime:
@@ -106,7 +95,7 @@ def check_simple(**kwargs):
     if there is more than one tree in the file    
 
     """
-  
+
     skeleton = kwargs['skeleton']
 
     from knossos_utils.skeleton_utils import is_simple_skeleton
@@ -135,8 +124,8 @@ def check_seed_contained(**kwargs):
                     "of the seed point (%d, %d, %d). Please correct the "
                     "problem and resubmit. Hint: If you need to move a node "
                     "only slightly, you can click it with the middle mouse "
-                    "button and drag the node." 
-                    % (work.task.x, work.task.y, work.task.z))                
+                    "button and drag the node."
+                    % (work.task.x, work.task.y, work.task.z))
 
 
 def check_connected_component(**kwargs):
@@ -152,18 +141,18 @@ def check_connected_component(**kwargs):
     if not all nodes are connected in the skeleton.
 
     """
-    
+
     skeleton = kwargs['skeleton']
 
     from knossos_utils.seleton_utils import is_singly_connected
     from knossos_utils.seleton_utils import get_the_nonempty_annotation
     from knossos_utils.seleton_utils import NonSimpleNML
-    
+
     try:
         anno = get_the_nonempty_annotation(skeleton)
     except NonSimpleNML:
         return ('This skeleton file contains more than one non-empty trees. '
-               'Please correct that problem and resubmit.')
+                'Please correct that problem and resubmit.')
 
     if not is_singly_connected(anno):
         return ("This skeleton file contains a tree that contains unconnected "
@@ -178,8 +167,8 @@ def email_on_submission(**kwargs):
     """
 
     (work, submit_is_final, submit_file, nml_string) = (kwargs['work'],
-        kwargs['submit_is_final'], kwargs['submit_file'],
-        kwargs['submit_file_as_string'])
+                                                        kwargs['submit_is_final'], kwargs['submit_file'],
+                                                        kwargs['submit_file_as_string'])
 
     if submit_is_final:
         is_final_string = 'Final '
@@ -198,7 +187,7 @@ def email_on_submission(**kwargs):
     ma.open_session()
 
     subject = 'New %sSubmission Notification: %s by %s' % (
-        is_final_string, work.task.name, work.employee.user.username, )
+        is_final_string, work.task.name, work.employee.user.username,)
 
     ma.send_mail('sender@example.com',
                  ['recipient@example.com'],

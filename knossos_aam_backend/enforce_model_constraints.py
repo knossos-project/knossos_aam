@@ -3,16 +3,15 @@ Signal-based actions to enforce model constraints, connected to their
 respective models in models.py. Function names start with sender model name.
 """
 
+import os
+from inspect import getmembers
+from inspect import isfunction
 
 import models as mdl
 from helpers import get_filefield_abspath
-from inspect import getmembers
-from inspect import isfunction
-import os
-from django.conf import settings
-
 
 __author__ = 'Fabian Svara'
+
 
 #
 # Pre-save actions
@@ -25,7 +24,7 @@ def task_name_without_dashes(sender, instance, **kwargs):
 
 def task_category_name_combination(sender, instance, **kwargs):
     instance.category_name_combination = '%s_%s' % (instance.category.name,
-                                                    instance.name, )
+                                                    instance.name,)
 
 
 def task_ensure_valid_path(sender, instance, **kwargs):

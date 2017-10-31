@@ -5,22 +5,20 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.utils.text import get_valid_filename
 
-from enforce_model_constraints import submission_work_enforce_frozen
+import checks
+from enforce_model_constraints import project_name_without_dashes
 from enforce_model_constraints import submission_ensure_valid_path
-from enforce_model_constraints import task_name_without_dashes
-from enforce_model_constraints import task_ensure_valid_path
+from enforce_model_constraints import submission_work_enforce_frozen
 from enforce_model_constraints import task_category_name_combination
+from enforce_model_constraints import task_ensure_valid_path
+from enforce_model_constraints import task_name_without_dashes
 from enforce_model_constraints import task_update_post_work_creation
 from enforce_model_constraints import task_update_post_work_deletion
-from enforce_model_constraints import work_update_post_submission
+from enforce_model_constraints import task_validate_checks
 from enforce_model_constraints import taskcategory_name_without_dashes
 from enforce_model_constraints import user_create_employee
-from enforce_model_constraints import project_name_without_dashes
 from enforce_model_constraints import user_username_without_dashes
-from enforce_model_constraints import task_validate_checks
-
-import checks
-
+from enforce_model_constraints import work_update_post_submission
 
 __author__ = 'Fabian Svara'
 
@@ -30,26 +28,26 @@ def submission_filename(self, filename):
     if self.is_final:
         finalstring = "final"
 
-    #if filename.endswith('.nml'):
+    # if filename.endswith('.nml'):
     #    extension = '.nml'
-    #elif filename.endswith('.k.zip'):
+    # elif filename.endswith('.k.zip'):
 
     # no files other than k.zips should ever be submitted
     extension = '.k.zip'
 
-    #else:
+    # else:
     #    extension = '.unknown'
 
     fname = '-'.join([self.work.task.category.name,
-                     self.work.task.name,
-                     self.employee.user.username,
-                     self.date.strftime('%Y%m%d-%H%M%S')
-                     , ]) 
+                      self.work.task.name,
+                      self.employee.user.username,
+                      self.date.strftime('%Y%m%d-%H%M%S')
+                         , ])
     fname += "-" + finalstring + extension if self.is_final else extension
     abs_fname = '%s/%s/%s' % (
         self.work.task.category.project.name,
         self.work.task.category.name,
-        fname, )
+        fname,)
 
     return abs_fname
 
@@ -59,9 +57,9 @@ def task_filename(self, filename):
         raise Exception('Only task file with extension .k.zip allowed')
 
     extension = '.k.zip'
-    #elif filename.lower().endswith('.nml'):
+    # elif filename.lower().endswith('.nml'):
     #    extension = '.nml'
-    #else:
+    # else:
     #    extension = '.nml'
 
     fname = '-'.join([self.category.name, self.name]) + extension

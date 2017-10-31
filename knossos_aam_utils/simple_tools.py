@@ -1,6 +1,7 @@
-from knossos_aam_backend.models import Task, Submission, Work
-import os, shutil, random
 from django.core.files import File
+
+from knossos_aam_backend.models import Task, Submission, Work
+
 
 def reset_task(username, task, month=None, delete_work=False):
     for cur_task in task:
@@ -15,17 +16,17 @@ def reset_task(username, task, month=None, delete_work=False):
                 work__task__name=cur_task)
         s.delete()
         w = Work.objects.get(employee__user__username__exact=username,
-	    task__name=cur_task)
+                             task__name=cur_task)
         w.worktime = 0.
         w.is_final = False
         w.latestsubmit = None
         w.save()
 
-        print 'Reset %s' % (w, )
+        print 'Reset %s' % (w,)
 
         if delete_work:
             w.delete()
-            print('Deleted %s' % (w, ))
+            print('Deleted %s' % (w,))
 
 
 def get_average_worktime(w):
@@ -39,7 +40,7 @@ def stats_for_task_set(t):
         avg_time = get_average_worktime(cur_t.work_set.all())
         fname = cur_t.task_file
         size = cur_t.task_file._get_size() / 1000.
-        
+
         stats.append((fname, avg_time, size))
 
     return stats
@@ -67,12 +68,11 @@ def copy_task(source_task, target_name, target_category):
     if source_task.task_file:
         fobj = file(source_task.task_file.path)
         t.task_file = File(fobj)
-    
-    t.save()
 
+    t.save()
 
     return t
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     pass

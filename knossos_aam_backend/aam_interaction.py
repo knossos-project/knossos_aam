@@ -5,25 +5,24 @@ logic goes here.
 
 __author__ = 'Fabian Svara'
 
+import re
+import zipfile
+from cStringIO import StringIO
+
 from django.db import transaction
 from django.utils import timezone
-from cStringIO import StringIO
-import zipfile
-import re
-from knossos_utils.skeleton import Skeleton
 from general_utilities.versions import compare_version
+from knossos_utils.skeleton import Skeleton
+
 import models
+from view_helpers import InvalidSubmission
 from view_helpers import TooManyActiveTasks
 from view_helpers import UserRace
-from view_helpers import InvalidSubmission
-from view_helpers import mail_notify
-
-
-__author__ = 'Fabian Svara'
 
 
 class NonEmptyWork(Exception):
     pass
+
 
 def delete_submission(s):
     if s.worktime:
@@ -49,9 +48,9 @@ def get_active_work(em):
     """
 
     active_work = models.Work.objects.filter(
-            employee=em,
-            is_final=False,
-            )
+        employee=em,
+        is_final=False,
+    )
 
     active_work = list(active_work)
     active_work = sorted(active_work, key=lambda x: x.pk)
@@ -75,9 +74,9 @@ def get_completed_work(em):
     """
 
     completed_work = models.Work.objects.filter(
-            employee=em,
-            is_final=True,
-            )
+        employee=em,
+        is_final=True,
+    )
 
     completed_work = list(completed_work)
 
@@ -121,23 +120,23 @@ def get_available_tasks(em, count=1):
         if len(cur_tasks) > 0:
             cur_tasks = list(cur_tasks)
             cur_tasks = sorted(
-                    cur_tasks, key=lambda x: x.priority, reverse=True)
+                cur_tasks, key=lambda x: x.priority, reverse=True)
             available_tasks_by_cat[curCategory] = cur_tasks[0:count]
             available_tasks.extend(cur_tasks)
 
     available_tasks = sorted(
-            available_tasks, key=lambda x: x.priority, reverse=True)
+        available_tasks, key=lambda x: x.priority, reverse=True)
 
     return available_tasks_by_cat, available_tasks
 
 
 def reset_task(task, username):
     s = models.Submission.objects.filter(
-            employee__user__username=username,
-            work__task__name=task)
+        employee__user__username=username,
+        work__task__name=task)
     s.delete()
     w = models.Work.objects.get(employee__user__username__exact=username,
-                         task__name=task)
+                                task__name=task)
     w.worktime = 0.
     w.is_final = False
     w.latestsubmit = None
@@ -175,7 +174,7 @@ def choose_task(employee, task_id):
             started=timezone.now(),
             task=models.Task.objects.get(pk=task_id),
             employee=employee,
-            is_final=False,)
+            is_final=False, )
     else:
         raise UserRace()
 
@@ -247,8 +246,8 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
     """
     if len(submit_file.name) > 200:
         raise InvalidSubmission(
-                'The maximal file name length for submissions is '
-                '200 character.')
+            'The maximal file name length for submissions is '
+            '200 character.')
 
     work = models.Work.objects.get(pk=submit_work_id)
 
@@ -271,7 +270,7 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
     if checks_to_run and not skip_checks:
         check_fns = dict()
         for cur_check in checks_to_run:
-            exec('from knossos_aam_backend.checks import %s' % (cur_check, ))
+            exec ('from knossos_aam_backend.checks import %s' % (cur_check,))
             cur_check_fn = locals()[cur_check]
             check_fns[cur_check] = cur_check_fn
 
@@ -340,10 +339,10 @@ def submit(employee, submit_file, submit_comment, submit_is_final,
 
     if submit_comment:
         subject = 'Comment on Submission of Task %s Task from %s' % (
-                work.task.name, employee.user.username, )
+            work.task.name, employee.user.username,)
         attachments = [(skeletonFileAsString, submit_file.name)]
         # todo get mailing to work again
-        #mail_notify('to@example.com', subject, submit_comment,
+        # mail_notify('to@example.com', subject, submit_comment,
         #            attachments=attachments, reply_to=work.employee.user.email)
 
     s = models.Submission.objects.create(
@@ -420,6 +419,7 @@ def get_monthly_worktime_for_submissions(submission_set):
 def get_monthly_worktime_for_work(w):
     return get_monthly_worktime_for_submissions(w.submission_set)
 
+
 def get_employee_info(emp):
     work = get_active_work(emp)
     info = {}
@@ -433,6 +433,7 @@ def get_employee_info(emp):
         info["last_submit"] = work.last_submission.datafile
     return info
 
+
 def get_employees_current_work():
     emp_set = {}
     for emp in models.Employee.objects.all():
@@ -440,12 +441,14 @@ def get_employees_current_work():
         emp_set[emp] = get_employee_info(emp)
     return emp_set
 
+
 def get_employee_infos_in_project(proj):
     employees = models.Employee.objects.filter(project=proj)
     emp_infos = []
     for emp in employees:
         emp_infos.append(get_employee_info(emp))
     return emp_infos
+
 
 def move_employees_to_project(employees, new_project):
     with transaction.atomic():

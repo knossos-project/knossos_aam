@@ -3,28 +3,29 @@
 {% block main %}
 <h1>User statistics for month {{year}} - {{month}}</h1>
 
-<h3>Sort by projects: </h3> 
-    <form action="{% url 'knossos_aam_backend:sort_by_project' %}	" method="post">
-        {% csrf_token %}
-        <button type="submit" name="sort_by_project_stats_month" value="{{ month }}">Sort by projects</button></td>
-        <input type="hidden" name="sort_by_project_stats_year" value="{{ year }}">
-    </form>
+<h3>Sort by projects: </h3>
+<form action="{% url 'knossos_aam_backend:sort_by_project' %}	" method="post">
+    {% csrf_token %}
+    <button type="submit" name="sort_by_project_stats_month" value="{{ month }}">Sort by projects</button>
+    </td>
+    <input type="hidden" name="sort_by_project_stats_year" value="{{ year }}">
+</form>
 
 <table id="boxtable">
-<tr>
-<th>Employee</th>
-<th>Monthly worktime</th>
-<th>Number of Submissions</th>
-<th>Tracing speed</th>
-</tr>
-{% for u, stats in users.items %}
-<tr>
-<td>{{ stats.first_name }} {{ stats.last_name }}</td>
-<td>{{ stats.total_worktime }}</td>
-<td>{{ stats.no_of_sub }}</td>
-<td>{{ stats.tracing_speed }}</td>
-</tr>
-{% endfor %}
+    <tr>
+        <th>Employee</th>
+        <th>Monthly worktime</th>
+        <th>Number of Submissions</th>
+        <th>Tracing speed</th>
+    </tr>
+    {% for u, stats in users.items %}
+    <tr>
+        <td>{{ stats.first_name }} {{ stats.last_name }}</td>
+        <td>{{ stats.total_worktime }}</td>
+        <td>{{ stats.no_of_sub }}</td>
+        <td>{{ stats.tracing_speed }}</td>
+    </tr>
+    {% endfor %}
 </table>
 
 {% endblock %}
